@@ -7,6 +7,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+requests = "^2.27.1"
+msal = "^1.17.0"
+quickxorhash = "^1.0.5"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
