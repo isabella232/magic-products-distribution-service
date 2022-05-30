@@ -1,0 +1,6 @@
+/.idea/runConfigurations
+/.venv
+/provisioning/terraform/.terraform
+/htmlcov
+/.coverage
+__pycache__
