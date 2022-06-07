@@ -19,8 +19,7 @@
           "description": "Whether the constraint constrains how the resource can be accessed, or be used.",
           "type": "string",
           "enum": [
-            "access",
-            "usage"
+            "access"
           ]
         },
         "restriction_code": {
@@ -28,23 +27,7 @@
           "description": "The domain the constraint pertains to.",
           "type": "string",
           "enum": [
-            "confidential",
-            "copyright",
-            "inConfidence",
-            "intellectualPropertyRights",
-            "licenceDistributor",
-            "licenceEndUser",
-            "licenceUnrestricted",
-            "license",
-            "otherRestrictions",
-            "patent",
-            "patentPending",
-            "private",
-            "restricted",
-            "SBU",
-            "statutory",
-            "trademark",
-            "unrestricted"
+            "restricted"
           ]
         },
         "statement": {
@@ -69,7 +52,114 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/constraint"
+      },
+      "minItems": 1
+    },
+    "distribution": {
+      "title": "Distribution",
+      "description": "Information about how to acquire, enquire about or retrieve the resource",
+      "type": "array",
+      "items": {
+        "required": [
+          "distributor",
+          "distribution_options"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "distributor": {
+            "$ref": "#/definitions/distributor"
+          },
+          "distribution_options": {
+            "$ref": "#/definitions/distribution_options"
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "distributor": {
+      "title": "Distributor",
+      "description": "A contact constrained to the the MAGIC team with a role of distributor.",
+      "required": [
+        "email",
+        "phone",
+        "address",
+        "online_resource"
+      ],
+      "properties": {
+        "organisation": {
+          "properties": {
+            "name": {
+              "enum": ["Mapping and Geographic Information Centre, British Antarctic Survey"]
+            }
+          }
+        },
+        "email": {
+          "enum": ["magic@bas.ac.uk"]
+        },
+        "phone": {
+          "enum": ["+44 (0)1223 221400"]
+        },
+        "address": {
+          "required": ["delivery_point", "city", "administrative_area", "postal_code", "country"],
+          "properties": {
+            "delivery_point": {
+              "enum": ["British Antarctic Survey, High Cross, Madingley Road"]
+            },
+            "city": {
+              "enum": ["Cambridge"]
+            },
+            "administrative_area": {
+              "enum": ["Cambridgeshire"]
+            },
+            "postal_code": {
+              "enum": ["CB3 0ET"]
+            },
+            "country": {
+              "enum": ["United Kingdom"]
+            }
+          }
+        },
+        "online_resource": {
+          "properties": {
+            "href": {
+              "enum": ["https://www.bas.ac.uk/team/magic"]
+            },
+            "title": {
+              "enum": ["Mapping and Geographic Information Centre (MAGIC) - BAS public website"]
+            },
+            "description": {
+              "enum": ["General information about the BAS Mapping and Geographic Information Centre (MAGIC) from the British Antarctic Survey (BAS) public website."]
+            },
+            "protocol": {
+              "enum": ["WWW:LINK-1.0-http--link"]
+            },
+            "function": {
+              "enum": ["information"]
+            }
+          }
+        },
+        "role": {
+          "items": {
+            "enum": [
+              "distributor"
+            ]
+          }
+        }
       }
+    },
+    "distribution_options": {
+      "title": "Distribution Options",
+      "description": "Set of formats and transfer options defining the forms the resource is distributed in.",
+      "type": "array",
+      "minItems": 1
+    },
+    "file_identifier": {
+      "title": "File identifier",
+      "description": "Identifier for the record describing the resource. This is almost always a UUID (v4).",
+      "type": "string",
+      "pattern": "^[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}$",
+      "minLength": 36,
+      "maxLength": 36
     },
     "hierarchy_level": {
       "title": "Hierarchy level",
@@ -100,7 +190,7 @@
       "title": "permission",
       "description": "Conditions which must be met to access artefacts of the resource.",
       "type": "object",
-      "required": ["scheme", "scheme_version"],
+      "required": ["scheme", "scheme_version", "directory_id"],
       "oneOf": [
         {"$ref": "#/definitions/_permissions_ms_graph_v1_alias"},
         {"$ref": "#/definitions/_permissions_ms_graph_v1_object_id"}
@@ -115,11 +205,16 @@
         "scheme_version": {
           "$ref": "#/definitions/__permissions_ms_graph_v1_scheme_version"
         },
+        "directory_id": {
+          "$ref": "#/definitions/__permissions_ms_graph_v1_directory_id"
+        },
         "alias": {
           "type": "array",
           "items": {
-            "type": "string"
-          }
+            "type": "string",
+            "enum": ["~nerc"]
+          },
+          "minItems": 1
         }
       }
     },
@@ -132,14 +227,23 @@
         "scheme_version": {
           "$ref": "#/definitions/__permissions_ms_graph_v1_scheme_version"
         },
+        "directory_id": {
+          "$ref": "#/definitions/__permissions_ms_graph_v1_directory_id"
+        },
         "object_id": {
           "type": "array",
           "items": {
-            "type": "string",
-            "enum": ["~nerc"]
-          }
+            "type": "string"
+          },
+          "minItems": 1
         }
       }
+    },
+    "__permissions_ms_graph_v1_directory_id": {
+      "title": "Directory ID",
+      "description": "Azure Active Directory ID",
+      "type": "string",
+      "enum": ["b311db95-32ad-438f-a101-7ba061712a4e"]
     },
     "__permissions_ms_graph_v1_scheme": {
       "title": "Scheme",
@@ -156,17 +260,11 @@
     "permissions": {
       "title": "Permissions",
       "description": "A series of conditions that must all be met to access artefacts of the resource.",
-      "oneOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/permission"
-          }
-        }
-      ]
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/permission"
+      },
+      "minItems": 1
     },
     "resource": {
       "title": "Resource",
@@ -180,11 +278,17 @@
       ],
       "additionalItems": true,
       "properties": {
+        "file_identifier": {
+          "$ref": "#/definitions/file_identifier"
+        },
         "hierarchy_level": {
           "$ref": "#/definitions/hierarchy_level"
         },
         "identification": {
           "$ref": "#/definitions/identification"
+        },
+        "distribution": {
+          "$ref": "#/definitions/distribution"
         }
       }
     }
