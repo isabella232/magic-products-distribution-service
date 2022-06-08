@@ -9,7 +9,7 @@ and code linting, etc.
 import json
 import base64
 import uuid
-from typing import Dict, List
+from typing import Dict, List, Optional, Union
 from http import client as http
 from pathlib import Path
 
@@ -18,9 +18,6 @@ import requests
 from requests import HTTPError
 from msal import PublicClientApplication
 
-
-record_id: str = "4a36ea8b-d4d8-4537-b46c-92f271ded940"
-aretefact_path: Path = Path("./test-artefact.txt")
 
 sharepoint_site_id: str = (
     "nercacuk.sharepoint.com,0561c437-744c-470a-887e-3d393e88e4d3,63825c43-db1b-40ca-a717-0365098c70c0"
@@ -35,10 +32,6 @@ auth_client_scopes: List[str] = ["https://graph.microsoft.com/Files.ReadWrite.Al
 auth_client_public: PublicClientApplication = PublicClientApplication(
     client_id=auth_client_id, authority=auth_client_tenancy
 )
-
-auth_token: str = ""
-directory_item_id: str = ""
-file_item: Dict[str, str] = {}
 
 
 def get_authentication_token() -> str:
@@ -275,6 +268,186 @@ def upload_file(file_path: Path, folder_id: str, record_id: str) -> Dict[str, st
     }
 
 
+def set_file_permissions(
+    file_item: Dict[str, str], file_permissions: List[Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]]
+) -> Dict[str, Union[str, List[Dict[str, str]]]]:
+    file_item: Dict[str, Union[str, List[Dict[str, str]]]] = file_item
+
+    for constraint in file_permissions:
+        for permission in constraint["permissions"]:
+            if "alias" in permission:
+                if permission["alias"] != ["~nerc"]:
+                    raise RuntimeError("Unrecognised alias value")
+
+                # create organisation sharing link and use as file URL
+                try:
+                    file_share_link_data: Optional[dict] = None
+
+                    file_item_permissions = requests.get(
+                        url=f"https://graph.microsoft.com/v1.0/drives/{sharepoint_drive_id}/items/{file_item['file_item_id']}/permissions",
+                        headers={"Authorization": f"Bearer {auth_token}"},
+                    )
+                    file_item_permissions.raise_for_status()
+                    file_item_permissions_data = file_item_permissions.json()
+
+                    file_item_permissions_has_share_link = False
+                    for permission in file_item_permissions_data["value"]:
+                        if (
+                            "link" in permission
+                            and "scope" in permission["link"]
+                            and permission["link"]["scope"] == "organization"
+                        ):
+                            file_item_permissions_has_share_link = True
+                            file_share_link_data = permission
+                            print(f"Permissions for file artefact already set - skipping")
+                            break
+                    if not file_item_permissions_has_share_link:
+                        file_share_link = requests.post(
+                            url=f"https://graph.microsoft.com/v1.0/drives/{sharepoint_drive_id}/items/{file_item['file_item_id']}/createLink",
+                            headers={"Authorization": f"Bearer {auth_token}"},
+                            json={
+                                "type": "view",
+                                "scope": "organization",
+                            },
+                        )
+                        file_share_link.raise_for_status()
+                        file_share_link_data = file_share_link.json()
+                        print(f"Permissions for file artefact set")
+                except HTTPError as e:
+                    print(e)
+                    print(e.response.json())
+                    raise RuntimeError("Unable to set permissions on file item for file artefact")
+                try:
+                    if "sharing_links" not in file_item:
+                        file_item["sharing_links"] = []
+                    file_item["sharing_links"].append(file_share_link_data["link"])
+                except KeyError:
+                    raise RuntimeError("Unable to get file item share link for file artefact")
+                try:
+                    file_item["file_item_url"]: str = file_share_link_data["link"]["webUrl"]
+                except KeyError:
+                    raise RuntimeError("Unable to get file item share URI for file artefact")
+            elif "object_id" in permission:
+                try:
+                    # get details of the parent item for the file item (which we will assign permissions to)
+                    file_item_details = requests.get(
+                        url=f"https://graph.microsoft.com/v1.0/drives/{sharepoint_drive_id}/items/{file_item['file_item_id']}",
+                        headers={"Authorization": f"Bearer {auth_token}"},
+                    )
+                    file_item_details.raise_for_status()
+                    file_item_details_data = file_item_details.json()
+                except HTTPError as e:
+                    print(e)
+                    print(e.response.json())
+                    raise RuntimeError("Unable to get file item details for file artefact")
+
+                try:
+                    # get permissions of the folder containing the file (the resource containing the artefact)
+                    file_parent_item_permissions = requests.get(
+                        url=f"https://graph.microsoft.com/v1.0/drives/{sharepoint_drive_id}/items/{file_item_details_data['parentReference']['id']}/permissions",
+                        headers={"Authorization": f"Bearer {auth_token}"},
+                    )
+                    file_parent_item_permissions.raise_for_status()
+                    file_parent_item_permissions_data = file_parent_item_permissions.json()
+                except HTTPError as e:
+                    print(e)
+                    print(e.response.json())
+                    raise RuntimeError("Unable to get item details for the parent of the file artefact")
+
+                # check for permissions per object ID, create any that are missing
+                for object_id in permission["object_id"]:
+                    _permission_missing = True
+
+                    for _permission in file_parent_item_permissions_data["value"]:
+                        # object IDs can relate to users or groups so check both
+                        try:
+                            if _permission["grantedToV2"]["user"]["id"] == object_id:
+                                file_permission_data = _permission
+                                _permission_missing = False
+                                print(
+                                    f"Permissions for user '{object_id}' to access file artefact already set - skipping"
+                                )
+                                break
+                        except KeyError:
+                            pass
+                        try:
+                            if _permission["grantedToV2"]["group"]["id"] == object_id:
+                                file_permission_data = _permission
+                                _permission_missing = False
+                                print(
+                                    f"Permissions for group '{object_id}' to access file artefact already set - skipping"
+                                )
+                                break
+                        except KeyError:
+                            pass
+
+                    if _permission_missing:
+                        try:
+                            # create permission
+                            file_permissions_invite = requests.post(
+                                url=f"https://graph.microsoft.com/v1.0/drives/{sharepoint_drive_id}/items/{file_item_details_data['parentReference']['id']}/invite",
+                                headers={"Authorization": f"Bearer {auth_token}"},
+                                json={
+                                    "requireSignIn": True,
+                                    "sendInvitation": False,
+                                    "roles": ["read"],
+                                    "recipients": [{"objectId": object_id}],
+                                },
+                            )
+                            file_permissions_invite.raise_for_status()
+                        except HTTPError as e:
+                            print(e)
+                            print(e.response.json())
+                            raise RuntimeError("Unable to set item details for the parent of the file artefact")
+
+                        try:
+                            # re-fetch permissions for the parent item as the response form the invite method only includes the older `grantedTo` resource
+                            file_parent_item_permissions = requests.get(
+                                url=f"https://graph.microsoft.com/v1.0/drives/{sharepoint_drive_id}/items/{file_item_details_data['parentReference']['id']}/permissions",
+                                headers={"Authorization": f"Bearer {auth_token}"},
+                            )
+                            file_parent_item_permissions.raise_for_status()
+                            file_parent_item_permissions_data = file_parent_item_permissions.json()
+                        except HTTPError as e:
+                            print(e)
+                            print(e.response.json())
+                            raise RuntimeError("Unable to get item details for the parent of the file artefact")
+
+                        for _permission in file_parent_item_permissions_data["value"]:
+                            # object IDs can relate to users or groups so check both
+                            try:
+                                if _permission["grantedToV2"]["user"]["id"] == object_id:
+                                    file_permission_data = _permission
+                                    _permission_missing = False
+                                    print(
+                                        f"Permissions for user '{object_id}' to access file artefact already set - skipping"
+                                    )
+                                    break
+                            except KeyError:
+                                pass
+                            try:
+                                if _permission["grantedToV2"]["group"]["id"] == object_id:
+                                    file_permission_data = _permission
+                                    _permission_missing = False
+                                    print(
+                                        f"Permissions for group '{object_id}' to access file artefact already set - skipping"
+                                    )
+                                    break
+                            except KeyError:
+                                pass
+                        if _permission_missing:
+                            raise RuntimeError("Permissions set but could not be retrieved.")
+
+                        print(f"Permissions for object '{object_id}' set to access file artefact via parent item.")
+
+                    if "permissions" not in file_item:
+                        file_item["permissions"] = []
+                    # noinspection PyUnboundLocalVariable
+                    file_item["permissions"].append(file_permission_data)
+
+    return file_item
+
+
 def make_download_proxy_item(file_item: Dict[str, str], record_id: str, media_type: str) -> Dict[str, str]:
     return {
         file_item["file_artefact_id"]: {
@@ -286,9 +459,40 @@ def make_download_proxy_item(file_item: Dict[str, str], record_id: str, media_ty
 
 
 def main() -> str:
+    record_id: str = "4a36ea8b-d4d8-4537-b46c-92f271ded940"
+    artefact_path: Path = Path("./test-artefact.txt")
+    file_permissions_all_nerc: List[Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]] = [
+        {
+            "type": "access",
+            "restriction_code": "restricted",
+            "permissions": [
+                {
+                    "scheme": "ms_graph",
+                    "scheme_version": "1",
+                    "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+                    "alias": ["~nerc"],
+                }
+            ],
+        }
+    ]
+    file_permissions_single_group: List[Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]] = [
+        {
+            "type": "access",
+            "restriction_code": "restricted",
+            "permissions": [
+                {
+                    "scheme": "ms_graph",
+                    "scheme_version": "1",
+                    "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+                    "object_id": ["b6e25d4c-7f88-45e5-a8ad-75bde1236108"],  # BAS Information Services
+                }
+            ],
+        }
+    ]
+
     directory_item_id = create_directory(directory_path=record_id, record_id=record_id)
-    file_item = upload_file(file_path=aretefact_path, folder_id=directory_item_id, record_id=record_id)
-    # set_file_permissions()
+    file_item = upload_file(file_path=artefact_path, folder_id=directory_item_id, record_id=record_id)
+    file_item = set_file_permissions(file_item=file_item, file_permissions=file_permissions_single_group)
     download_proxy_lookup_item = make_download_proxy_item(
         file_item=file_item, record_id=record_id, media_type="text/plain"
     )
@@ -297,6 +501,7 @@ def main() -> str:
 
 
 if __name__ == "__main__":
+    auth_token = ""
     if auth_token == "":
         auth_token = get_authentication_token()
 
