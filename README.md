@@ -7,45 +7,67 @@ British Antarctic Survey (BAS).
 
 ### Purpose
 
-... acts as a data access system only, Data Catalogue used as a frontend with HTTP/URLs used as an interface. ...
+This service is intended to allow MAGIC to securely distribute products with relevant end-users.
+
+Specifically, this service acts as a data access system, to allow links within items in the Data Catalogue (a data 
+discovery system) that describe products, to be downloaded (if they have access).
 
 ### Status
 
-This project is an early alpha. This means:
+This project is an early alpha working towards a Minimal Viable Product (MVP). This means:
 
 * all, or parts, of this service may not be working
 * all, or parts, of this service may stop working at any time
 * all, or parts, of this service may not work correctly, or as expectedly (including destructively)
 * all, or parts, of this service may change at any time (in terms of implementation or functionally)
+* use-cases supported by this service are limited and restrictive
 * documentation may be missing or incorrect
-* no support is provided
+* no support is provided and no real and/or sensitive information should be used
+
+### Limitations
+
+This service has a number of limitations, including:
+
+- products cannot use conditional access, such as agreeing to a licence before use
+- products cannot be unrestricted, an alternative data access system needs to be used
+- products cannot use multiple, independent, sets of access conditions for different sets of people - such as externals
+- where access is restricted to a set of users, they cannot be identified using email addresses, which are easier
+- where access is restricted to users or groups, these users and groups must be within the NERC Active Directory
+- files to be deposited in this service must be located on the same computer used to run the tool for this service
+- there is only a single, production, environment available, there is no training environment for example
+
+See the project [issue tracker](#issue-tracking) for planned features and changes to this service.
 
 ### Scope
 
 #### Products
 
 This service SHOULD be used for distributing products created or managed by MAGIC. This service MUST NOT be used for
-distributing any datasets.
+distributing any datasets (regardless of whether they are restricted or not).
 
-Products are considered to be:
+For the purposes of this service, examples of things that would be considered a *product* includes:
 
-* ...
+* maps (typically with PDF and image outputs)
+* annotated images
 
-Datasets are considered to be:
+For the purposes of this service, examples of things that would be considered a *dataset* includes:
 
-* ...
+* DEMs
+* point clouds, 3D meshes and related resources
+* satellite imagery
+* aerial photography and RPAS imagery
 
-**Note:** These lists are not exhaustive. It is accepted these definitions are imperfect and subjective. Specific use
-cases can be discussed as needed (using the *#data* channel in Slack initially).
+**Note:** These examples are not exhaustive, and it is accepted these definitions are imperfect and subjective. 
+Specific use-cases can be discussed as needed (using the *#data* channel in Slack initially).
 
-Products and datasets are treated differently for practical and organisational reasons (datasets are considerably
-bigger in storage/quantity volume than products, and BAS datasets are managed by the Polar Data Centre). As such,
-unrestricted datasets MUST be deposited with the PDC. Use cases for distributing restricted datasets SHOULD be discussed
-internally (using the *#data* channel in Slack initially) to find a suitable solution.
+Products and datasets are treated differently for practical and organisational reasons (e.g. storage size and the 
+number of items, and that in BAS, datasets are managed by the Polar Data Centre).
 
 #### Access only
 
-... this service is read-only. It is not designed to allow end-users to deposit products themselves. ...
+This service is a data access system, to allow authorised end-users to access, and download copies of, artefacts 
+(files) deposited by a set of depositors (MAGIC staff). This service does not support end-users depositing products 
+themselves.
 
 #### File sizes
 
@@ -76,22 +98,57 @@ Products containing
 [sensitive personal/category data](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/lawful-basis-for-processing/special-category-data/#scd1)
 (such as health, ethnicity or religious data) MUST be discussed before being deposited in this service.
 
+## Requirements
+
+In addition to being within the [Scope](#scope) of this service, Resources (products) MUST meet these requirements 
+to be supported by this service:
+
+**Note:** This service supports a limited set of use-cases.
+
+1. the Resource must be considered a product within the [definition](#products) used by this service
+2. the Resource (product) to be deposited MUST be described by a suitably complete metadata record [1], deposited in 
+   the BAS Data Catalogue
+3. the Artefacts (files) that make up each Resource (product) MUST fit within the [soft file size limits](#file-sizes)
+
+[1] Required resource metadata:
+
+- a `file_identifier` property with a UUIDv4 value
+- a `hierarchy_level` property with a value of 'product'
+- at least one resource `constraint` with:
+  - a `type` property with a value of 'access'
+  - a `restriction_code` property with a value of 'restricted'
+  - a `permissions` property with a list of values that are objects with:
+    - a `scheme` property with a value of 'ms_graph'
+    - a `scheme_version` property with a value of '1'
+    - a `directory_id` property with a value of 'b311db95-32ad-438f-a101-7ba061712a4e'
+    - either:
+      - an `alias` property with a list of values that must be one of:
+        - '~nerc' (where a product should be restricted to any NERC AAD principle)
+      - an `object_id` property with a list of of values that must be:
+        - an object identifier of a user or group object within the NERC AAD
+  - at least one `distribution` with:
+    - a distributor of MAGIC
+    - at least one `distribution_option` with:
+      - a `transfer_option` with:
+        - a `href` value containing:
+          - a URI using the `file://` protocol, referencing a locally accessible file, under 5GB in size
+
 ## Usage
 
 ### Test upload script
 
-A test script is available to check test files can be uploaded and permissions set correctly etc. This script can be
+A test script is available to check test files can be uploaded and permissions are set correctly etc. This script can be
 ran within a [Development Environment](#development-environment).
 
 ```shell
 $ poetry run python test-upload.py
 ```
 
-**Note:** You will be asked to sign-in to the 'MAGIC-PDC Data Workflows PoC' application when completing the OAuth login
-process. This is temporary until dedicated Azure App Registration is made for this service.
+**Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
 
-**Note:** This test script will be wholly replaced with a proper application once we've verified SharePoint works as
-expected. As such, this code is not well written, structured, or tested.
+**Note:** You will be asked to sign-in to the 'MAGIC-PDC Data Workflows PoC' application when signing-in.
+
+**Note:** This test script is not representative of how code for this service will be written.
 
 ### Manually depositing artefacts
 
@@ -100,207 +157,231 @@ urgent.
 
 **Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
 
-1. from the [MAGIC Products Distribution](https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/_layouts/15/viewlsts.aspx?view=14)
+To manually deposit artefacts (files) for a resource (product) that meets the [Requirements](#requirements):
+
+1. export the metadata record for the resource (product) from the Data Catalogue
+2. from the [MAGIC Products Distribution](https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/_layouts/15/viewlsts.aspx?view=14)
    SharePoint site, select the relevant document library (use 'Main' if unsure)
-2. click *+ New* -> *Folder* from the toolbar
-  * name the folder after the ID of the metadata record the artefacts relate to
+3. click *+ New* -> *Folder* from the toolbar
+  * name the folder after the `file_identifier` property from the metadata record for the resource
 3. click *Edit in grid view* from the toolbar
-  * fill in the 'Record ID' value for the new folder, using the ID of the metadata record the artefacts relate to
+  * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata 
+    record for the resource
   * click *Exit grid view* from the toolbar
 4. navigate into the newly created folder
-5. upload the artefacts (either using the *Upload* option in the toolbar or by dragging & dropping into the main window)
-6. click *Edit in grid view* from the toolbar
-  * fill in the 'Record ID' value for each uploaded artefact, using the ID of the metadata record they relate to
-  * click *Exit grid view* from the toolbar
+5. for each `distribution_option` listed in the metadata record for the resource:
+   1. upload the artefact (file) listed in the `transfer_option`, either using the *Upload* option in the toolbar, 
+      or by dragging & dropping into the main window
+   2. click *Edit in grid view* from the toolbar:
+      * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the metadata 
+    record for the resource
+      * set the 'artefact_id' value for the uploaded file to a new UUID value (using 
+        [this tool](https://www.uuidgenerator.net) for example)
+      * click *Exit grid view* from the toolbar
+6. for each `constraint` listed in the metadata record for the resource:
+   1. if the constraint permissions uses an `alias` property, with a value of `~nerc`:
+      1. select each file (artefact) within the directory for the product (resource):
+      2. click *Share* from the toolbar
+      3. click *People you specify can edit*
+      4. change the selection to *People in NERC with the link*
+      5. deselect the *Allow editing* option under Other settings
+      6. click *Apply*
+      7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (artefact)
+      8. note this URL for use in creating distribution options
+   2. if the constraint permissions uses an `object_id` property:
+      1. for each object identifier:
+         1. go to the [Azure Portal](https://portal.azure.com/) [1]
+         2. enter the object identifier into the global search box from the top navigation
+         3. either a group or user should be returned as a result (under an 'Azure Active Directory' heading) [2]
+         4. select this group or user to view its details
+         5. note the value for the 'Email' property for use in assigning permissions
+         6. in SharePoint, select the directory for the product (resource)
+         7. click *Open the details pane* ('i' icon) from the toolbar
+         8. from the 'Has access' section, click *Manage access'
+         9. from the 'Direct access' section, click *Grant Access* ('+' icon)
+         10. in the 'name' field, group or email field, enter the email address noted earlier
+         11. click the 'who has access' link ('pencil' icon) and select the *Can View* option ('prohibited pencil' icon)
+         12. do not enter a message
+         13. deselect the 'Notify people' option
+         14. click *Grant access*
+      2. for each file (artefact) within the directory for the product (resource):
+         1. note the URL for use in creating distributing options will be in the form of [3]
+7. for each `distribution_option` listed in the metadata record for the resource:
+   1. update the `transfer_option` value to use the URL noted for each distribution option
+8. re-import the metadata record for the resource (product) in the Data Catalogue
 
-... permissions ...
+[1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object 
+identifiers need to be converted into a corresponding email address for the group or user each identifier identifies.
+Users and groups can be searched for within the NERC Active Directory using the [Azure Portal](https://portal.azure.com).
 
-... distribution option in records ...
+[2] If no result is returned, contact support.
+
+[3] `https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main/{resource_id}/{file_name}`
+
+Where:
+
+* `{resource_id}` is the value of the `file_identifier` property in the metadata
+* `{file_name}` is the name of the file (URl encoded and including the file extension)
+
+For example: 
+
+https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main/4a36ea8b-d4d8-4537-b46c-92f271ded940/foo-map.pdf
 
 ## Implementation
 
-### SharePoint - structure
-
-TODO: Split out conceptual model from SharePoint model as sections, re-orientate sections to not be SharePoint centric.
-
-SharePoint is used to store, and manage access to, product artefacts distributed through this service.
+### Structure - conceptual
 
 Conceptually, Artefacts (files) for Resources (products) are stored as objects, with tags storing unique identifiers for
 each Artefact and the Resource they relate to.
 
-Within SharePoint, artefacts are stored as files in a SharePoint document library. Files are grouped into directories
-named resource they relate to. Two custom columns (`resource_id` and `artefact_id`), in the document library's
-corresponding SharePoint list, are used to record the Resource and Artefact identifiers for each object/item.
-
-This structure allows all items to be related back to their resource, and allows files to use any naming convention.
-
 For example, a map product ('Map of Foo') consists of two distribution files (artefacts), a PDF and JPEG export.
 
-* the identifier assigned to this product (resource) is: `24dce09c-9eee-4d90-8402-63f63012d767`
-* the identifier assigned to the PDF file (artefact) is: `cb794264-e2d1-4a5a-8e31-8cf774fede54`
-* the identifier assigned to the JPEG file (artefact) is: `6c21b27a-154a-488c-9ff9-764e6e9441c0`
+* the identifier assigned to this product (Resource) is: `24dce09c-9eee-4d90-8402-63f63012d767`
+* the identifier assigned to the PDF file (Artefact) is: `cb794264-e2d1-4a5a-8e31-8cf774fede54`
+* the identifier assigned to the JPEG file (Artefact) is: `6c21b27a-154a-488c-9ff9-764e6e9441c0`
 
-**Note:** The resource identifiers would be assigned when the metadata record for the resource is created. Identifiers
-for each artefact would be assigned when they are deposited within this service.
+**Note:** The Resource identifier would be assigned when the metadata record for the Resource is created. Identifiers
+for each Artefact would be assigned when they are deposited within this service.
 
-Conceptually, these artefacts would be stored as objects like this:
+Conceptually, these Artefacts would be stored as objects like this:
 
 | Object Name    | Resource Identifier                    | Artefact Identifier                    |
 | -------------- | -------------------------------------- | -------------------------------------- |
 | `foo-map.pdf`  | `24dce09c-9eee-4d90-8402-63f63012d767` | `cb794264-e2d1-4a5a-8e31-8cf774fede54` |
 | `foo-map.jpeg` | `24dce09c-9eee-4d90-8402-63f63012d767` | `6c21b27a-154a-488c-9ff9-764e6e9441c0` |
 
-**Note:** The object names are not significant in this model, they could be named anything.
+**Note:** Object names are not significant in this service or conceptual model, they could be anything.
 
-In SharePoint, artefacts would be stored like this:
+### Structure - SharePoint
+
+The conceptual structure above is implemented using SharePoint.
+
+Artefacts are stored as files in a SharePoint document library. Files are grouped into directories named after the
+Resource (product) they relate to. Two custom columns (`resource_id` and `artefact_id`), in the document library's
+corresponding SharePoint list, are used to record the Resource and Artefact identifiers for each object/file.
+
+**Note:** Files MAY be named, and renamed, using any naming scheme/convention. The `arefact_id` value MUST NOT be 
+changed.
+
+**Note:** To facilitate automation, sub-directories within Resource directories MUST NOT be used.
+
+The 'Map of Foo' example from earlier would therefore be stored like this:
 
 ```
 MAGIC Products Distribution  <-- (SharePoint site)
 └── Main  <-- (Document Library)
     └── 24dce09c-9eee-4d90-8402-63f63012d767  <-- (Directory for resource)
-        | >> resource_id: 24dce09c-9eee-4d90-8402-63f63012d767  <-- (Custom column for resource identifier)
-        | >> artefact_id: -  <-- (Custom column for artefact identifier, not applicable for directories)
+        | >> resource_id: '24dce09c-9eee-4d90-8402-63f63012d767'  <-- (Custom column for resource identifier)
+        | >> artefact_id: '-'  <-- (Custom column for artefact identifier, not applicable for directories)
         ├── foo-map.pdf  <-- (Artefact for resource)
-            | >> resource_id: 24dce09c-9eee-4d90-8402-63f63012d767  <-- (Custom column for resource identifier)
-            | >> artefact_id: cb794264-e2d1-4a5a-8e31-8cf774fede54  <-- (Custom column for artefact identifier)
+            | >> resource_id: '24dce09c-9eee-4d90-8402-63f63012d767'  <-- (Custom column for resource identifier)
+            | >> artefact_id: 'cb794264-e2d1-4a5a-8e31-8cf774fede54'  <-- (Custom column for artefact identifier)
         └── foo-map.png  <-- (Artefact for resource)
-            | >> resource_id: 24dce09c-9eee-4d90-8402-63f63012d767  <-- (Custom column for resource identifier)
-            | >> artefact_id: 6c21b27a-154a-488c-9ff9-764e6e9441c0  <-- (Custom column for artefact identifier)
+            | >> resource_id: '24dce09c-9eee-4d90-8402-63f63012d767'  <-- (Custom column for resource identifier)
+            | >> artefact_id: '6c21b27a-154a-488c-9ff9-764e6e9441c0'  <-- (Custom column for artefact identifier)
 ```
 
-**Note:** To facilitate automation, sub-directories within resource directories MUST NOT be used.
+### Environments - conceptual
 
-For example, this structure is NOT supported:
+Different environments are used for different contexts/purposes.
 
-```
-MAGIC Products Distribution
-└── Main
-    └── d988bfef-17af-449c-aef6-09e9936ab31a
-        ├── 1-2
-        │   ├── 1.txt
-        │   └── 2.txt
-        └── 3-4
-            ├── 3.txt
-            └── 4.txt
-```
+Environments are isolated from each other, meaning artefacts deposited in, or removed from, one environment will not
+appear or disappear from other environments.
 
-The supported structure for this example would be:
+A single *production* environment is currently used. Others (such as training, testing) may be added in future.
 
-```
-MAGIC Products Distribution
-└── Main
-    └── d988bfef-17af-449c-aef6-09e9936ab31a
-        ├── 1.txt
-        ├── 2.txt
-        ├── 3.txt
-        └── 4.txt
-```
+### Environments - SharePoint
 
-### SharePoint - environments
+Different document libraries within the same overall SharePoint site are used for each environment.
 
-Different document libraries are used for different contexts/environments (i.e. production, testing, training, etc.).
-Each library is considered isolated, and managed differently (i.e. files in a training environment may be removed at
-any time, without warning etc.).
+| Document Library | Environment |
+| ---------------- | ----------- |
+| Main             | Production  |
 
-| Document Library | Environment | Notes                                              |
-| ---------------- | ----------- | -------------------------------------------------- |
-| Main             | Production  | Used for testing during whilst service is in Alpha |
+### Permissions - Conceptual
 
-**Note:** Additional environments will be added as this project develops.
+Conceptually, permissions for Artefacts (files) are controlled by access and usage constraints applied to Resources 
+(products). This service is responsible for evaluating and enforcing these constraints.
 
-### SharePoint - permissions
+**WARNING:** Constraints applied to Resources and their Artefacts can only be enforced at the point an Artefact is 
+accessed. Once downloaded, an authorised end-user could allow an unauthorised user to access their copy without any 
+permission checks, by emailing it to them for example.
 
-#### SharePoint permissions - overview
+Access constraints control who can access Resources. They fall into two categories:
 
-By default, artefacts in this service can only be accessed by members of MAGIC. In order to allow others to access them,
-additional permissions can be assigned to support a range of access scenarios. These range from a set of named
-individuals, through to anonymous access by the public (for unrestricted products).
+* restricted - to a specified set of users
+* unrestricted - accessible to anyone
 
-Permissions are controlled by the metadata record for each product, specifically through one or more access constraints.
-This service will read these constraints and convert them into suitable permission assignments within SharePoint.
+**Note:** This service only supports *restricted* access constraints, see the [Limitations](#limitations) section 
+for more information.
 
-**Note:** Permissions are assigned at the product (resource) level. All artefacts/files for a product will have the same
-permissions.
+Usage constraints control how, and under which conditions, Resources can be used. Typically these conditions are 
+within a standard or bespoke licence, which end-users may be required to agree to in order to use a Product. 
 
-**Note:** Multiple, different, sets of permissions can be applied to products at the same time, treated as a logical OR.
-A user only needs to be included in _one_ permissions sets to access files, not _all_ permission sets.
+**Note:** This service does not yet support usage constraints.
 
-**Note:** Permissions **SHOULD NOT** be applied directly to files within SharePoint, i.e. that are not included in the
-relevant metadata record. Any ad-hoc permission assignments will be removed when the metadata record is next evaluated -
-which may happen without warning.
+### Permissions - Metadata records
 
-**Note:** Permissions apply until they are revoked (by removing the relevant access constraint from the metadata record).
-They are not time limited.
+Access and usage constraints (described in the previous section) for Resources (products) are defined within ISO 19115 
+metadata. This service will use these constraints to apply suitable permissions to each Artefact within a Resource.
 
-**Note:** Once downloaded, permissions on artefacts can no longer be enforced. I.e. A staff member could download an
-artefact that is restricted to BAS staff, and then email the downloaded file to anyone, including non-staff members.
+**Note:** The examples listed in this section use the JSON representation of the ISO 19139 (ISO 19115 XML encoding)
+defined by the [BAS Metadata Library](https://gitlab.data.bas.ac.uk/uk-pdc/metadata-infrastructure/metadata-library),
+which is typically used for authoring Resource metadata.
 
-#### SharePoint permissions - metadata record encoding
+#### Access constraints
 
-Permissions to access a product's artefacts are controlled by the metadata record for the product using access
-constraints. Each constraint represents a distinct set of permissions encoded as a
-[JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519).
+Access constraints are JSON objects with these properties and allowed values:
 
-JWTs are used because they are encoded as a URL safe string, which is the data type used by constraints in metadata
-records, and because include a signature. This ensures permissions cannot be tampered with once assigned by an
-authorised editor (the person writing the metadata record for the product). This step is an additional safe-guard as
-metadata records may only be edited by authorised users generally.
+| Property                       | Type   | Required | Allowed Values                             |
+|--------------------------------|--------|----------|--------------------------------------------|
+| `type`                         | String | Yes      | 'access' [2]                               |
+| `restriction_code`             | String | Yes      | 'restricted' [2]                           |
+| `permissions`                  | Array  | Yes      | -                                          |
+| `permissions.*`                | Object | Yes      | -                                          |
+| `permissions.*.scheme`         | String | Yes      | 'ms_graph' [2]                             |
+| `permissions.*.scheme_version` | String | Yes      | '1' [2]                                    |
+| `permissions.*.directory_id`   | String | Yes      | 'b311db95-32ad-438f-a101-7ba061712a4e' [2] |
+| `permissions.*.alias`          | Array  | No [1]   | -                                          |
+| `permissions.*.alias.*`        | String | Yes      | '~nerc' [2]                                |
+| `permissions.*.object_id`      | Array  | No [1]   | -                                          |
+| `permissions.*.object_id.*`    | String | Yes      | Identifier for an object in the NERC AAD   |
 
-In addition to standard JWT claims (see notes below), a private 'permissions' claim is used to encode each set of
-permissions. This claim is a JSON object, the structure of which is identical to a
-[driveRecipient](https://docs.microsoft.com/en-us/graph/api/resources/driverecipient) resource defined in the Microsoft
-Graph API.
+[1] At least one of these properties MUST be specified.
 
-**Note:** As permissions do not expire (they apply until they are revoked), JWTs used for permissions do not include
-the standard (but optional) `exp` (expires) claim, as its value would be arbitrary and not provide a benefit.
+[2] Required value. See the [Requirements](#requirements) section for more information.
 
-Example (base64 decoded) JWT representing a product restricted to a single user:
-
-```json
-
-```
-
-#### Restricted to specific BAS users
-
-...
-
-Example access constraint (single user, 'Connie Watson'):
+For example:
 
 ```json
 {
     "type": "access",
     "restriction_code": "restricted",
-    "permissions": {
-        "email": "conwat@bas.ac.uk"
-    }
+    "permissions": [
+        {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "object_id": ["06fc160e-d099-4f5b-be19-edf662030ad5"]
+        }
+    ]
 }
 ```
 
-...
+#### Constraints for products restricted to within NERC
 
-#### Restricted to specific BAS teams
+Where a product is restricted, but can be accessed by anyone internally, it MUST be marked as restricted and specify a
+conventional value `~nerc` to represent 'All NERC Staff'.
 
-...
+'All NERC Staff' in this context includes any user or service within the NERC Azure Active Directory, which includes 
+(but is not limited to):
 
-Example access constraint (single team, 'BAS Innovation & Impact [directorate]'):
+* BAS staff (inc. students)
+* BGS staff
+* NERC staff
+* various service accounts used for automated processes and tools
 
-```json
-{
-    "type": "access",
-    "restriction_code": "restricted",
-    "permissions": {
-        "objectID": "06fc160e-d099-4f5b-be19-edf662030ad5"
-    }
-}
-```
-
-Object IDs for teams can be found through the
-[Groups section](https://portal.azure.com/#blade/Microsoft_AAD_IAM/GroupsManagementMenuBlade/AllGroups) of the Azure
-Active Directory via the Azure Portal.
-
-#### Restricted to all BAS staff
-
-... staff, students, temporary staff?, contractors? ...
+**WARNING:** To stress, 'All NERC Staff' is not limited to BAS but NERC generally.
 
 Example access constraint:
 
@@ -308,71 +389,131 @@ Example access constraint:
 {
     "type": "access",
     "restriction_code": "restricted",
-    "permissions": {
-        "alias": "~bas"
-    }
+    "permissions": [
+        {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "alias": ["~nerc"]
+        }
+    ]
 }
 ```
 
-When processed, this service will create an organisation type sharing link for each file within a product's directory,
-rather than assigning permissions directly to the product directory. These sharing links will be used as the URL
-included in the metadata record to access each artefact from within the Data Catalogue.
+#### Constraints for products restricted to members of a specific team
 
-...
+Where a product needs to be restricted to members of a specific team, or set of teams, it MUST be marked as restricted 
+and specify the identifier(s) for the Azure Active Directory group(s) that represent the relevant team(s) who's members 
+should have access.
 
-#### Restricted to an external collaboration
+In most cases, these groups will underpin the Microsoft Office 365 Team for that team, however any group can be used
+(such as project specific group or a group representing something like the BAS Management Team). All members of 
+each group specified will be allowed access (i.e. a union of all group members). 
 
-...
+Groups are referenced using their Object Identifier (Object ID), which can be found from the 
+[Groups section](https://portal.azure.com/#blade/Microsoft_AAD_IAM/GroupsManagementMenuBlade/AllGroups) of the Azure 
+Active Directory in the [Azure Portal](https://portal.azure.com).
 
-Example access constraint:
+For example, the group that underpins the Microsoft Office 365 Team for MAGIC is
+[`25728084-25c1-459f-999e-d42720a5f8fa`](https://portal.azure.com/#blade/Microsoft_AAD_IAM/GroupDetailsMenuBlade/Overview/groupId/25728084-25c1-459f-999e-d42720a5f8fa).
 
-```json
-
-```
-
-...
-
-#### Conditional access - licence agreement
-
-... use a usage constraint with an agreement ID ...
-
-Example access constraint:
-
-```json
-
-```
-
-...
-
-#### Unrestricted access
-
-Where a product is not sensitive, or is intended for public access, it can be marked as unrestricted. This will allow
-anyone to access a product's artefacts without needing an account.
-
-Example access constraint:
+Example access constraint (single team):
 
 ```json
 {
     "type": "access",
-    "restriction_code": "unrestricted"
+    "restriction_code": "restricted",
+    "permissions": [
+        {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "object_id": ["25728084-25c1-459f-999e-d42720a5f8fa"]
+        }
+    ]
 }
 ```
 
-The NERC Office 365 tenancy, within which the MAGIC Products Distribution service sits, does not allow files to be
-shared externally. To workaround this and enable public access, a service principle representing anonymous users is
-used.
+Example access constraint (multiple teams):
 
-This service principle is defined within the NERC Active Directory, and is therefore considered an internal user. The
-Data Catalogue is able to use this service principle to request details of items via the Microsoft Graph API. Responses
-to these API calls include a temporary pre-signed URL allowing the item to be downloaded.
+```json
+{
+    "type": "access",
+    "restriction_code": "restricted",
+    "permissions": [
+        {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "object_id": ["25728084-25c1-459f-999e-d42720a5f8fa", "06fc160e-d099-4f5b-be19-edf662030ad5"]
+        }
+    ]
+}
+```
 
-When an artefact download link is followed in the Catalogue, the user-agent is redirected to this pre-signed URL to
-access the file. As the pre-signed URL is time limited, this process needs to be dynamic and so is performed by the
-Downloads Proxy, an AWS Lambda function that intercepts download URLs to capture download metrics.
+#### Constraints for products restricted to a specific users
 
-Though considered an internal user, the anonymous service principle is not a member of the SharePoint site for this
-service, and so must be assigned specific permissions to access any files. This is intentional to avoid accidentally
-allowing unrestricted access to restricted items.
+Where a product needs to be restricted to a specific user, or set of users, it MUST be marked as restricted and specify 
+the identifier(s) for the Azure Active Directory user(s) that should have access.
+
+Users are referenced using their Object Identifier (Object ID), which can be found from the 
+[Users section](https://portal.azure.com/#view/Microsoft_AAD_IAM/UsersManagementMenuBlade/~/MsGraphUsers) of the Azure 
+Active Directory in the [Azure Portal](https://portal.azure.com).
+
+For example, the Object ID for *Connie Watson* is `04615595-a264-4d8d-9a95-4b1ae6c8d85e`.
+
+Example access constraint (single user):
+
+```json
+{
+    "type": "access",
+    "restriction_code": "restricted",
+    "permissions": [
+        {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "object_id": ["04615595-a264-4d8d-9a95-4b1ae6c8d85e"]
+        }
+    ]
+}
+```
+
+Example access constraint (multiple users):
+
+```json
+{
+    "type": "access",
+    "restriction_code": "restricted",
+    "permissions": [
+        {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "object_id": ["04615595-a264-4d8d-9a95-4b1ae6c8d85e", "7aa5b9f2-25c1-4a88-8627-c0d7d1326b55"]
+        }
+    ]
+}
+```
+
+### Permissions - SharePoint
+
+Permissions described by metadata record access constraints are applied to items stored in SharePoint using the 
+Microsoft Graph API.
+
+**Note:** Ad-hoc permission assignments MUST NOT be made directly within SharePoint. They may be removed or changed 
+without warning by this service.
+
+Where permissions reference the `~nerc` 'All NERC Staff' alias, an 
+[Organisational sharing link](https://docs.microsoft.com/en-us/graph/api/driveitem-createlink) is created for each 
+file (Artefact) associated with the Resource (product). These links will be used in distribution options, instead of 
+the normal item access URL.
+
+Where permissions reference one or more Object IDs, one or more 
+[DriveRecipient](https://docs.microsoft.com/en-us/graph/api/resources/driverecipient) resources are 
+[created](https://docs.microsoft.com/en-us/graph/api/driveitem-invite), granting each permission to access the 
+directory representing the Resource (product). These permissions cascade to any files (Artefacts) within this directory.
+Normal access URLs for each item/file are used in distribution options.
 
 ### SharePoint - objects reference
 
@@ -491,7 +632,7 @@ Git and [Poetry](https://python-poetry.org) are required to set up a local devel
 
 ```shell
 # clone from the BAS GitLab instance if possible
-$ git clone ...
+$ git clone https://gitlab.data.bas.ac.uk/MAGIC/products-distribution.git
 
 # setup virtual environment
 $ cd magic-products-distribution
@@ -514,7 +655,7 @@ The maintainer of this project is the BAS Mapping and Geographic Information Cen
 ## Issue tracking
 
 This project uses issue tracking, see the
-[Issue tracker](...) for more information.
+[Issue tracker](https://gitlab.data.bas.ac.uk/MAGIC/products-distribution/-/issues) for more information.
 
 **Note:** Read & write access to this issue tracker is restricted. Contact the project maintainer to request access.
 
