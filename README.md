@@ -65,7 +65,7 @@ number of items, and that in BAS, datasets are managed by the Polar Data Centre)
 
 #### Access only
 
-This service is a data access system, to allow authorised end-users to access, and download copies of, artefacts 
+This service is a data access system, to allow authorised end-users to access, and download copies of, Artefacts 
 (files) deposited by a set of depositors (MAGIC staff). This service does not support end-users depositing products 
 themselves.
 
@@ -73,7 +73,7 @@ themselves.
 
 As soft limits:
 
-* the total size of artefacts for each product/resource SHOULD NOT exceed 3GB (giving roughly 8,500 deposits)
+* the total size of Artefacts for each product/Resource SHOULD NOT exceed 3GB (giving roughly 8,500 deposits)
 
 **Note:** It is fine for some products to exceed this limit, as its assumed most products will be significantly smaller
 than this limit.
@@ -85,18 +85,6 @@ apply. Namely:
 * any file MUST NOT exceed 250GB
 * the total, maximum, size of all files MUST NOT exceed 25TB
 * the maximum number of items (files/folders) MUST NOT exceed 30 million
-
-#### Personal data
-
-Products containing routine personal data, such as the author of a map, MAY be deposited in this service without
-discussion, including as unrestricted products.
-
-Products relating to individuals (where they can be identified) MAY be deposited in this service, providing they are
-restricted. Making such products unrestricted MUST be discussed beforehand.
-
-Products containing
-[sensitive personal/category data](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/lawful-basis-for-processing/special-category-data/#scd1)
-(such as health, ethnicity or religious data) MUST be discussed before being deposited in this service.
 
 ## Requirements
 
@@ -150,43 +138,43 @@ $ poetry run python test-upload.py
 
 **Note:** This test script is not representative of how code for this service will be written.
 
-### Manually depositing artefacts
+### Manually depositing Artefacts
 
 **Note:** These instructions should only be used as a last resort, where automated methods have failed and the need is
 urgent.
 
 **Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
 
-To manually deposit artefacts (files) for a resource (product) that meets the [Requirements](#requirements):
+To manually deposit Artefacts (files) for a Resource (product) that meets the [Requirements](#requirements):
 
-1. export the metadata record for the resource (product) from the Data Catalogue
+1. export the metadata record for the Resource (product) from the Data Catalogue
 2. from the [MAGIC Products Distribution](https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/_layouts/15/viewlsts.aspx?view=14)
    SharePoint site, select the relevant document library (use 'Main' if unsure)
 3. click *+ New* -> *Folder* from the toolbar
-  * name the folder after the `file_identifier` property from the metadata record for the resource
+  * name the folder after the `file_identifier` property from the metadata record for the Resource
 3. click *Edit in grid view* from the toolbar
   * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata 
-    record for the resource
+    record for the Resource
   * click *Exit grid view* from the toolbar
 4. navigate into the newly created folder
-5. for each `distribution_option` listed in the metadata record for the resource:
-   1. upload the artefact (file) listed in the `transfer_option`, either using the *Upload* option in the toolbar, 
+5. for each `distribution_option` listed in the metadata record for the Resource:
+   1. upload the Artefact (file) listed in the `transfer_option`, either using the *Upload* option in the toolbar, 
       or by dragging & dropping into the main window
    2. click *Edit in grid view* from the toolbar:
       * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the metadata 
-    record for the resource
+    record for the Resource
       * set the 'artefact_id' value for the uploaded file to a new UUID value (using 
         [this tool](https://www.uuidgenerator.net) for example)
       * click *Exit grid view* from the toolbar
-6. for each `constraint` listed in the metadata record for the resource:
+6. for each `constraint` listed in the metadata record for the Resource:
    1. if the constraint permissions uses an `alias` property, with a value of `~nerc`:
-      1. select each file (artefact) within the directory for the product (resource):
+      1. select each file (Artefact) within the directory for the product (Resource):
       2. click *Share* from the toolbar
       3. click *People you specify can edit*
       4. change the selection to *People in NERC with the link*
       5. deselect the *Allow editing* option under Other settings
       6. click *Apply*
-      7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (artefact)
+      7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (Artefact)
       8. note this URL for use in creating distribution options
    2. if the constraint permissions uses an `object_id` property:
       1. for each object identifier:
@@ -195,7 +183,7 @@ To manually deposit artefacts (files) for a resource (product) that meets the [R
          3. either a group or user should be returned as a result (under an 'Azure Active Directory' heading) [2]
          4. select this group or user to view its details
          5. note the value for the 'Email' property for use in assigning permissions
-         6. in SharePoint, select the directory for the product (resource)
+         6. in SharePoint, select the directory for the product (Resource)
          7. click *Open the details pane* ('i' icon) from the toolbar
          8. from the 'Has access' section, click *Manage access'
          9. from the 'Direct access' section, click *Grant Access* ('+' icon)
@@ -204,11 +192,11 @@ To manually deposit artefacts (files) for a resource (product) that meets the [R
          12. do not enter a message
          13. deselect the 'Notify people' option
          14. click *Grant access*
-      2. for each file (artefact) within the directory for the product (resource):
+      2. for each file (Artefact) within the directory for the product (Resource):
          1. note the URL for use in creating distributing options will be in the form of [3]
-7. for each `distribution_option` listed in the metadata record for the resource:
+7. for each `distribution_option` listed in the metadata record for the Resource:
    1. update the `transfer_option` value to use the URL noted for each distribution option
-8. re-import the metadata record for the resource (product) in the Data Catalogue
+8. re-import the metadata record for the Resource (product) in the Data Catalogue
 
 [1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object 
 identifiers need to be converted into a corresponding email address for the group or user each identifier identifies.
@@ -229,12 +217,19 @@ https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main/4a36ea8b-d4
 
 ## Implementation
 
+This project consists of:
+
+* a library and service for uploading and managing files within a SharePoint document library
+* a workflow for depositing files using a metadata record as input and output (writing back where files are stored)
+* a tool which automates this workflow based on a selected metadata record
+* documentation for using this tool, including instructions for using the workflow in a manual way
+
 ### Structure - conceptual
 
 Conceptually, Artefacts (files) for Resources (products) are stored as objects, with tags storing unique identifiers for
 each Artefact and the Resource they relate to.
 
-For example, a map product ('Map of Foo') consists of two distribution files (artefacts), a PDF and JPEG export.
+For example, a map product ('Map of Foo') consists of two distribution files (Artefacts), a PDF and JPEG export.
 
 * the identifier assigned to this product (Resource) is: `24dce09c-9eee-4d90-8402-63f63012d767`
 * the identifier assigned to the PDF file (Artefact) is: `cb794264-e2d1-4a5a-8e31-8cf774fede54`
@@ -285,7 +280,7 @@ MAGIC Products Distribution  <-- (SharePoint site)
 
 Different environments are used for different contexts/purposes.
 
-Environments are isolated from each other, meaning artefacts deposited in, or removed from, one environment will not
+Environments are isolated from each other, meaning Artefacts deposited in, or removed from, one environment will not
 appear or disappear from other environments.
 
 A single *production* environment is currently used. Others (such as training, testing) may be added in future.
@@ -584,10 +579,10 @@ Contact [BAS IT](mailto:servicedesk@bas.ac.uk) to request a new SharePoint site:
 * title: `MAGIC Products Distribution`
 * type: *Team Site* (not *Communications Hub*)
 * owners:
-  * one or more admin accounts (e.g. `o365conwat@bas.ac.uk`), separate from end-user accounts
+    * one or more admin accounts (e.g. `o365conwat@bas.ac.uk`), separate from end-user accounts
 * members:
-  * members of the [BAS MAGIC Team](https://nercacuk.sharepoint.com/sites/BASMagicTeam), as a group
-  * the `BAS_MAGIC_PRODUCTS_DIST_COND_ACCESS` service principle
+    * members of the [BAS MAGIC Team](https://nercacuk.sharepoint.com/sites/BASMagicTeam), as a group
+    * the `BAS_MAGIC_PRODUCTS_DIST_COND_ACCESS` service principle
 * visitors: None
 
 **Note:** Do NOT add the `BAS_MAGIC_PRODUCTS_DIST_ANON_ACCESS` service principle as a site member (or any other role).
@@ -596,31 +591,31 @@ Once created:
 
 1. as an admin user, remove all widgets/text from the default site homepage
 2. as an admin user, create a new document library:
-  * name: `Main`
-  * description: `Access copies of products created or managed by MAGIC for distribution. Production environment.`
-  * 'show in site navigation': *False*
+    * name: `Main`
+    * description: `Access copies of products created or managed by MAGIC for distribution. Production environment.`
+    * 'show in site navigation': *False*
 3. once created, add a new list column:
-  * type: *Single line of text*
-  * name: `resource_id`
-  * description: `Resource identifier each artefact relates to`
-  * default value: None
-  * 'Use calculated value': *False*
-  * (more options) maximum number of characters: `255`
-  * (more options) 'Require that this column contains information': *True*
-  * (more options) 'Enforce unique values': *False*
-  * (more options) 'Add to all content types': *True*
-  * (more options) column validation: None
+    * type: *Single line of text*
+    * name: `resource_id`
+    * description: `Resource identifier each artefact relates to`
+    * default value: None
+    * 'Use calculated value': *False*
+    * (more options) maximum number of characters: `255`
+    * (more options) 'Require that this column contains information': *True*
+    * (more options) 'Enforce unique values': *False*
+    * (more options) 'Add to all content types': *True*
+    * (more options) column validation: None
 4. once created, add a second new list column:
-  * type: *Single line of text*
-  * name: `artefact_id`
-  * description: `Unique identifier for each resource artefact`
-  * default value: None
-  * 'Use calculated value': *False*
-  * (more options) maximum number of characters: `255`
-  * (more options) 'Require that this column contains information': *True*
-  * (more options) 'Enforce unique values': *False*
-  * (more options) 'Add to all content types': *True*
-  * (more options) column validation: None
+    * type: *Single line of text*
+    * name: `artefact_id`
+    * description: `Unique identifier for each resource artefact`
+    * default value: None
+    * 'Use calculated value': *False*
+    * (more options) maximum number of characters: `255`
+    * (more options) 'Require that this column contains information': *True*
+    * (more options) 'Enforce unique values': *False*
+    * (more options) 'Add to all content types': *True*
+    * (more options) column validation: None
 
 ## Development
 
