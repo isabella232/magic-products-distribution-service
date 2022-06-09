@@ -1,0 +1,66 @@
+{
+  "file_identifier": "b311db95-32ad-438f-a101-7ba061712a4e",
+  "hierarchy_level": "product",
+  "identification": {
+    "constraints": [
+      {
+        "type": "access",
+        "restriction_code": "restricted",
+        "permissions": [
+          {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "alias": [
+              "~nerc"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "distribution": [
+    {
+      "distributor": {
+        "organisation": {
+          "name": "Mapping and Geographic Information Centre, British Antarctic Survey"
+        },
+        "phone": "+44 (0)1223 221400",
+        "address": {
+          "delivery_point": "British Antarctic Survey, High Cross, Madingley Road",
+          "city": "Cambridge",
+          "administrative_area": "Cambridgeshire",
+          "postal_code": "CB3 0ET",
+          "country": "United Kingdom"
+        },
+        "email": "magic@bas.ac.uk",
+        "online_resource": {
+          "href": "https://www.bas.ac.uk/team/magic",
+          "title": "Mapping and Geographic Information Centre (MAGIC) - BAS public website",
+          "description": "General information about the BAS Mapping and Geographic Information Centre (MAGIC) from the British Antarctic Survey (BAS) public website.",
+          "protocol": "WWW:LINK-1.0-http--link",
+          "function": "information"
+        },
+        "role": [
+          "distributor"
+        ]
+      },
+      "distribution_options": [
+        {
+          "transfer_option": {
+            "online_resource": {
+              "href": "https://nercacuk.sharepoint.com/:t:/s/MAGICProductsDistribution/EfC27DV6lOFCg7dQt8egtdgBh3wLtUOY_kztAvIBdimj5A?e=b48aWZ\n",
+              "title": "Test Artefact",
+              "description": "Download Test Artefact",
+              "protocol": "WWW:LINK-1.0-http--link",
+              "function": "download"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
+

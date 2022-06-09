@@ -1,0 +1,63 @@
+{
+  "file_identifier": "f21dda43-61b4-4239-a5dc-c32e49c6d476",
+  "hierarchy_level": "product",
+  "identification": {
+    "constraints": [
+      {
+        "type": "access",
+        "restriction_code": "restricted",
+        "permissions": [
+          {
+            "scheme": "ms_graph",
+            "scheme_version": "1",
+            "directory_id": "b311db95-32ad-438f-a101-7ba061712a4e",
+            "object_id": [
+              "06fc160e-d099-4f5b-be19-edf662030ad5"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "distribution": [
+    {
+      "distributor": {
+        "organisation": {
+          "name": "Mapping and Geographic Information Centre, British Antarctic Survey"
+        },
+        "phone": "+44 (0)1223 221400",
+        "address": {
+          "delivery_point": "British Antarctic Survey, High Cross, Madingley Road",
+          "city": "Cambridge",
+          "administrative_area": "Cambridgeshire",
+          "postal_code": "CB3 0ET",
+          "country": "United Kingdom"
+        },
+        "email": "magic@bas.ac.uk",
+        "online_resource": {
+          "href": "https://www.bas.ac.uk/team/magic",
+          "title": "Mapping and Geographic Information Centre (MAGIC) - BAS public website",
+          "description": "General information about the BAS Mapping and Geographic Information Centre (MAGIC) from the British Antarctic Survey (BAS) public website.",
+          "protocol": "WWW:LINK-1.0-http--link",
+          "function": "information"
+        },
+        "role": [
+          "distributor"
+        ]
+      },
+      "distribution_options": [
+        {
+          "transfer_option": {
+            "online_resource": {
+              "href": "file://../../test-artefact.txt",
+              "title": "Test Artefact",
+              "description": "Download Test Artefact",
+              "protocol": "WWW:LINK-1.0-http--link",
+              "function": "download"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
