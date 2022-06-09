@@ -155,19 +155,20 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
 4. click *Edit in grid view* from the toolbar
     * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata 
       record for the Resource
+    * set the 'artefact_id' value for the new folder to '-' (dash), as it doesn't apply
     * click *Exit grid view* from the toolbar
 5. navigate into the newly created folder
-6. for each `distribution_option` listed in the metadata record for the Resource:
-    1. upload the Artefact (file) listed in the `transfer_option`, either using the *Upload* option in the toolbar, 
-       or by dragging & dropping into the main window
+6. for each `distribution.distribution_option` listed in the metadata record for the Resource:
+    1. upload the Artefact (file) listed in the `transfer_option.online_resource.href`, either using the *Upload* 
+       option in the toolbar, or by dragging & dropping into the main window
     2. click *Edit in grid view* from the toolbar:
         * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the 
      metadata record for the Resource
         * set the 'artefact_id' value for the uploaded file to a new UUID value (using 
      [this tool](https://www.uuidgenerator.net) for example)
         * click *Exit grid view* from the toolbar
-7. for each `constraint` listed in the metadata record for the Resource:
-    1. if the constraint permissions uses an `alias` property, with a value of `~nerc`:
+7. for each `identification.constraint` listed in the metadata record for the Resource:
+    1. if the constraint permissions uses an `permissions.alias` property, with a value of `~nerc`:
         1. select each file (Artefact) within the directory for the product (Resource):
         2. click *Share* from the toolbar
         3. click *People you specify can edit*
@@ -176,7 +177,7 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
         6. click *Apply*
         7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (Artefact)
         8. note this URL for use in creating distribution options
-    2. if the constraint permissions uses an `object_id` property:
+    2. if the constraint permissions uses an `permissions.object_id` property:
         1. for each object identifier:
             1. go to the [Azure Portal](https://portal.azure.com/) [1]
             2. enter the object identifier into the global search box from the top navigation
@@ -195,8 +196,8 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
             14. click *Grant access*
         2. for each file (Artefact) within the directory for the product (Resource):
             1. note the URL for use in creating distributing options will be in the form of [3]
-8. for each `distribution_option` listed in the metadata record for the Resource:
-    1. update the `transfer_option` value to use the URL noted for each distribution option
+8. for each `distribution.distribution_option` listed in the metadata record for the Resource:
+    1. update the `transfer_option.online_resource.href` value to use the URL noted for each distribution option
 9. re-import the metadata record for the Resource (product) in the Data Catalogue
 
 [1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object 
