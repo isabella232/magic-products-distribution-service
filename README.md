@@ -36,7 +36,7 @@ This service has a number of limitations, including:
 - files to be deposited in this service must be located on the same computer used to run the tool for this service
 - there is only a single, production, environment available, there is no training environment for example
 
-See the project [issue tracker](#issue-tracking) for planned features and changes to this service.
+See the project [issue tracker](#issue-tracking) for planned features that may address these limitations.
 
 ### Scope
 
@@ -151,52 +151,53 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
 2. from the [MAGIC Products Distribution](https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/_layouts/15/viewlsts.aspx?view=14)
    SharePoint site, select the relevant document library (use 'Main' if unsure)
 3. click *+ New* -> *Folder* from the toolbar
-  * name the folder after the `file_identifier` property from the metadata record for the Resource
-3. click *Edit in grid view* from the toolbar
-  * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata 
-    record for the Resource
-  * click *Exit grid view* from the toolbar
-4. navigate into the newly created folder
-5. for each `distribution_option` listed in the metadata record for the Resource:
-   1. upload the Artefact (file) listed in the `transfer_option`, either using the *Upload* option in the toolbar, 
-      or by dragging & dropping into the main window
-   2. click *Edit in grid view* from the toolbar:
-      * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the metadata 
-    record for the Resource
-      * set the 'artefact_id' value for the uploaded file to a new UUID value (using 
-        [this tool](https://www.uuidgenerator.net) for example)
-      * click *Exit grid view* from the toolbar
-6. for each `constraint` listed in the metadata record for the Resource:
-   1. if the constraint permissions uses an `alias` property, with a value of `~nerc`:
-      1. select each file (Artefact) within the directory for the product (Resource):
-      2. click *Share* from the toolbar
-      3. click *People you specify can edit*
-      4. change the selection to *People in NERC with the link*
-      5. deselect the *Allow editing* option under Other settings
-      6. click *Apply*
-      7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (Artefact)
-      8. note this URL for use in creating distribution options
-   2. if the constraint permissions uses an `object_id` property:
-      1. for each object identifier:
-         1. go to the [Azure Portal](https://portal.azure.com/) [1]
-         2. enter the object identifier into the global search box from the top navigation
-         3. either a group or user should be returned as a result (under an 'Azure Active Directory' heading) [2]
-         4. select this group or user to view its details
-         5. note the value for the 'Email' property for use in assigning permissions
-         6. in SharePoint, select the directory for the product (Resource)
-         7. click *Open the details pane* ('i' icon) from the toolbar
-         8. from the 'Has access' section, click *Manage access'
-         9. from the 'Direct access' section, click *Grant Access* ('+' icon)
-         10. in the 'name' field, group or email field, enter the email address noted earlier
-         11. click the 'who has access' link ('pencil' icon) and select the *Can View* option ('prohibited pencil' icon)
-         12. do not enter a message
-         13. deselect the 'Notify people' option
-         14. click *Grant access*
-      2. for each file (Artefact) within the directory for the product (Resource):
-         1. note the URL for use in creating distributing options will be in the form of [3]
-7. for each `distribution_option` listed in the metadata record for the Resource:
-   1. update the `transfer_option` value to use the URL noted for each distribution option
-8. re-import the metadata record for the Resource (product) in the Data Catalogue
+    * name the folder after the `file_identifier` property from the metadata record for the Resource
+4. click *Edit in grid view* from the toolbar
+    * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata 
+      record for the Resource
+    * click *Exit grid view* from the toolbar
+5. navigate into the newly created folder
+6. for each `distribution_option` listed in the metadata record for the Resource:
+    1. upload the Artefact (file) listed in the `transfer_option`, either using the *Upload* option in the toolbar, 
+       or by dragging & dropping into the main window
+    2. click *Edit in grid view* from the toolbar:
+        * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the 
+     metadata record for the Resource
+        * set the 'artefact_id' value for the uploaded file to a new UUID value (using 
+     [this tool](https://www.uuidgenerator.net) for example)
+        * click *Exit grid view* from the toolbar
+7. for each `constraint` listed in the metadata record for the Resource:
+    1. if the constraint permissions uses an `alias` property, with a value of `~nerc`:
+        1. select each file (Artefact) within the directory for the product (Resource):
+        2. click *Share* from the toolbar
+        3. click *People you specify can edit*
+        4. change the selection to *People in NERC with the link*
+        5. deselect the *Allow editing* option under Other settings
+        6. click *Apply*
+        7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (Artefact)
+        8. note this URL for use in creating distribution options
+    2. if the constraint permissions uses an `object_id` property:
+        1. for each object identifier:
+            1. go to the [Azure Portal](https://portal.azure.com/) [1]
+            2. enter the object identifier into the global search box from the top navigation
+            3. either a group or user should be returned as a result (under an 'Azure Active Directory' heading) [2]
+            4. select this group or user to view its details
+            5. note the value for the 'Email' property for use in assigning permissions
+            6. in SharePoint, select the directory for the product (Resource)
+            7. click *Open the details pane* ('i' icon) from the toolbar
+            8. from the 'Has access' section, click *Manage access'
+            9. from the 'Direct access' section, click *Grant Access* ('+' icon)
+            10. in the 'name' field, group or email field, enter the email address noted earlier
+            11. click the 'who has access' link ('pencil' icon) and select the *Can View* option ('prohibited pencil' 
+                icon)
+            12. do not enter a message
+            13. deselect the 'Notify people' option
+            14. click *Grant access*
+        2. for each file (Artefact) within the directory for the product (Resource):
+            1. note the URL for use in creating distributing options will be in the form of [3]
+8. for each `distribution_option` listed in the metadata record for the Resource:
+    1. update the `transfer_option` value to use the URL noted for each distribution option
+9. re-import the metadata record for the Resource (product) in the Data Catalogue
 
 [1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object 
 identifiers need to be converted into a corresponding email address for the group or user each identifier identifies.
