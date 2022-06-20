@@ -157,8 +157,8 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
     * set the 'artefact_id' value for the new folder to '-' (dash), as it doesn't apply
     * click *Exit grid view* from the toolbar
 5. navigate into the newly created folder
-    1. upload the Artefact (file) listed in the `transfer_option.online_resource.href`, either using the *Upload* 
 6. for each `distribution` listed in the metadata record for the Resource:
+    1. upload the Artefact (file) listed in the `transfer_option.online_resource.href`, either using the *Upload*
        option in the toolbar, or by dragging & dropping into the main window
     2. click *Edit in grid view* from the toolbar:
         * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the
@@ -194,14 +194,15 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
             13. deselect the 'Notify people' option
             14. click *Grant access*
         2. for each file (Artefact) within the directory for the product (Resource):
-9. re-import the metadata record for the Resource (product) in the Data Catalogue
-
-[1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object 
            1. note the URL for use in creating Data Catalogue Download Proxy artefact lookup items in the form of [3]
 8. for each `distribution` listed in the metadata record for the Resource:
    1. create a
       [Data Catalogue Downloads Proxy artefact lookup item](https://gitlab.data.bas.ac.uk/MAGIC/add-metadata-toolbox#updating-downloads-proxy-artefacts-lookups)
       manually [4]
+   2. update the `transfer_option.online_resource.href` value in the form of [5]
+9. re-import the metadata record for the Resource (product) into the Data Catalogue
+
+[1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object
 identifiers need to be converted into a corresponding email address for the group or user each identifier identifies.
 Users and groups can be searched for within the NERC Active Directory using the [Azure Portal](https://portal.azure.com).
 
@@ -214,9 +215,49 @@ Where:
 * `{resource_id}` is the value of the `file_identifier` property in the metadata
 * `{file_name}` is the name of the file (URl encoded and including the file extension)
 
-For example: 
+For example:
 
-https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main/4a36ea8b-d4d8-4537-b46c-92f271ded940/foo-map.pdf
+```
+https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main/24dce09c-9eee-4d90-8402-63f63012d767/foo-map.pdf
+```
+
+[4]
+
+```shell
+# with the awscurl installed and access to a AWS IAM principle with appropriate privileges
+$ awscurl --region eu-west-1 --service lambda --access_key $AWS_ACCESS_KEY_ID --secret_key $AWS_SECRET_ACCESS_KEY 'https://dvej4gdfa333uci4chyhkxj3wq0fkxrs.lambda-url.eu-west-1.on.aws/' --request POST --header 'Content-Type: application/json' --data $'{"origin_url": "{origin_url}", "artefact_id": "{artefact_id}", "resource_id": "{resource_id}", "media_type": "{media_type}"}'
+```
+
+Where:
+
+* `{origin_url}` is the URL noted for creating Data Catalogue Download Proxy artefact lookup items
+* `{artefact_id}` is the unique ID generated for the Artefact
+* `{resource_id}` is the value of the `file_identifier` property in the metadata for the Artefact
+* `{media_type}` is the (preferably IANA assigned) media type for the Artefact
+
+For example (based on [3]):
+
+```shell
+# with the awscurl installed and access to a AWS IAM principle with appropriate privileges
+$ awscurl --region eu-west-1 --service lambda --access_key $AWS_ACCESS_KEY_ID --secret_key $AWS_SECRET_ACCESS_KEY 
+'https://dvej4gdfa333uci4chyhkxj3wq0fkxrs.lambda-url.eu-west-1.on.aws/' --request POST --header 'Content-Type: application/json' --data $'{"artefact_id": "cb794264-e2d1-4a5a-8e31-8cf774fede54", "resource_id": "24dce09c-9eee-4d90-8402-63f63012d767", "media_type": "application/pdf", "origin_url": "https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main/24dce09c-9eee-4d90-8402-63f63012d767/foo-map.pdf"}'
+```
+
+[5]
+
+```
+https://data.bas.ac.uk/download/{artefact_id}
+```
+
+Where:
+
+* `{artefact_id}` is the unique ID generated for the Artefact
+
+For example (based on [4]):
+
+```
+https://data.bas.ac.uk/download/cb794264-e2d1-4a5a-8e31-8cf774fede54
+```
 
 ## Implementation
 
