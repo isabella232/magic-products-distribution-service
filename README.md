@@ -137,6 +137,23 @@ $ poetry run python test-upload.py
 
 **Note:** This test script is not representative of how code for this service will be written.
 
+### Test lookup items script
+
+A test script is available to check artefact lookup entries can be added programmatically to the Data Catalogue 
+Downloads Proxy. This script can be ran within a [Development Environment](#development-environment).
+
+```shell
+$ poetry run python test-lookup.py
+```
+
+**Note:** You need suitable permissions (the `BAS-ADD-Catalogue-Downloads-Proxy-Function-Write-Staging` IAM customer 
+managed policy attached to a suitable user within the BAS AWS account) to run this script.
+
+**Note:** You need to setup AWS credentials to run this script, for example by running `aws configure` with the AWS CLI
+installed.
+
+**Note:** This test script is not representative of how code for this service will be written.
+
 
 **Note:** This test script is not representative of how code for this service will be written.
 
