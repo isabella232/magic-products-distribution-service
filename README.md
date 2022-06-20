@@ -9,7 +9,7 @@ British Antarctic Survey (BAS).
 
 This service is intended to allow MAGIC to securely distribute products with relevant end-users.
 
-Specifically, this service acts as a data access system, to allow links within items in the Data Catalogue (a data 
+Specifically, this service acts as a data access system, to allow links within items in the Data Catalogue (a data
 discovery system) that describe products, to be downloaded (if they have access).
 
 ### Status
@@ -57,16 +57,16 @@ For the purposes of this service, examples of things that would be considered a 
 * satellite imagery
 * aerial photography and RPAS imagery
 
-**Note:** These examples are not exhaustive, and it is accepted these definitions are imperfect and subjective. 
+**Note:** These examples are not exhaustive, and it is accepted these definitions are imperfect and subjective.
 Specific use-cases can be discussed as needed (using the *#data* channel in Slack initially).
 
-Products and datasets are treated differently for practical and organisational reasons (e.g. storage size and the 
+Products and datasets are treated differently for practical and organisational reasons (e.g. storage size and the
 number of items, and that in BAS, datasets are managed by the Polar Data Centre).
 
 #### Access only
 
-This service is a data access system, to allow authorised end-users to access, and download copies of, Artefacts 
-(files) deposited by a set of depositors (MAGIC staff). This service does not support end-users depositing products 
+This service is a data access system, to allow authorised end-users to access, and download copies of, Artefacts
+(files) deposited by a set of depositors (MAGIC staff). This service does not support end-users depositing products
 themselves.
 
 #### File sizes
@@ -88,13 +88,13 @@ apply. Namely:
 
 ## Requirements
 
-In addition to being within the [Scope](#scope) of this service, Resources (products) MUST meet these requirements 
+In addition to being within the [Scope](#scope) of this service, Resources (products) MUST meet these requirements
 to be supported by this service:
 
 **Note:** This service supports a limited set of use-cases.
 
 1. the Resource must be considered a product within the [definition](#products) used by this service
-2. the Resource (product) to be deposited MUST be described by a suitably complete metadata record [1], deposited in 
+2. the Resource (product) to be deposited MUST be described by a suitably complete metadata record [1], deposited in
    the BAS Data Catalogue
 3. the Artefacts (files) that make up each Resource (product) MUST fit within the [soft file size limits](#file-sizes)
 
@@ -152,7 +152,7 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
 3. click *+ New* -> *Folder* from the toolbar
     * name the folder after the `file_identifier` property from the metadata record for the Resource
 4. click *Edit in grid view* from the toolbar
-    * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata 
+    * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata
       record for the Resource
     * set the 'artefact_id' value for the new folder to '-' (dash), as it doesn't apply
     * click *Exit grid view* from the toolbar
@@ -161,9 +161,9 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
 6. for each `distribution` listed in the metadata record for the Resource:
        option in the toolbar, or by dragging & dropping into the main window
     2. click *Edit in grid view* from the toolbar:
-        * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the 
+        * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the
      metadata record for the Resource
-        * set the 'artefact_id' value for the uploaded file to a new UUID value (using 
+        * set the 'artefact_id' value for the uploaded file to a new UUID value (using
      [this tool](https://www.uuidgenerator.net) for example)
         * click *Exit grid view* from the toolbar
 7. for each `identification.constraint` listed in the metadata record for the Resource:
@@ -188,7 +188,7 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
             8. from the 'Has access' section, click *Manage access'
             9. from the 'Direct access' section, click *Grant Access* ('+' icon)
             10. in the 'name' field, group or email field, enter the email address noted earlier
-            11. click the 'who has access' link ('pencil' icon) and select the *Can View* option ('prohibited pencil' 
+            11. click the 'who has access' link ('pencil' icon) and select the *Can View* option ('prohibited pencil'
                 icon)
             12. do not enter a message
             13. deselect the 'Notify people' option
@@ -258,7 +258,7 @@ Artefacts are stored as files in a SharePoint document library. Files are groupe
 Resource (product) they relate to. Two custom columns (`resource_id` and `artefact_id`), in the document library's
 corresponding SharePoint list, are used to record the Resource and Artefact identifiers for each object/file.
 
-**Note:** Files MAY be named, and renamed, using any naming scheme/convention. The `arefact_id` value MUST NOT be 
+**Note:** Files MAY be named, and renamed, using any naming scheme/convention. The `arefact_id` value MUST NOT be
 changed.
 
 **Note:** To facilitate automation, sub-directories within Resource directories MUST NOT be used.
@@ -298,11 +298,11 @@ Different document libraries within the same overall SharePoint site are used fo
 
 ### Permissions - Conceptual
 
-Conceptually, permissions for Artefacts (files) are controlled by access and usage constraints applied to Resources 
+Conceptually, permissions for Artefacts (files) are controlled by access and usage constraints applied to Resources
 (products). This service is responsible for evaluating and enforcing these constraints.
 
-**WARNING:** Constraints applied to Resources and their Artefacts can only be enforced at the point an Artefact is 
-accessed. Once downloaded, an authorised end-user could allow an unauthorised user to access their copy without any 
+**WARNING:** Constraints applied to Resources and their Artefacts can only be enforced at the point an Artefact is
+accessed. Once downloaded, an authorised end-user could allow an unauthorised user to access their copy without any
 permission checks, by emailing it to them for example.
 
 Access constraints control who can access Resources. They fall into two categories:
@@ -310,17 +310,17 @@ Access constraints control who can access Resources. They fall into two categori
 * restricted - to a specified set of users
 * unrestricted - accessible to anyone
 
-**Note:** This service only supports *restricted* access constraints, see the [Limitations](#limitations) section 
+**Note:** This service only supports *restricted* access constraints, see the [Limitations](#limitations) section
 for more information.
 
-Usage constraints control how, and under which conditions, Resources can be used. Typically these conditions are 
-within a standard or bespoke licence, which end-users may be required to agree to in order to use a Product. 
+Usage constraints control how, and under which conditions, Resources can be used. Typically these conditions are
+within a standard or bespoke licence, which end-users may be required to agree to in order to use a Product.
 
 **Note:** This service does not yet support usage constraints.
 
 ### Permissions - Metadata records
 
-Access and usage constraints (described in the previous section) for Resources (products) are defined within ISO 19115 
+Access and usage constraints (described in the previous section) for Resources (products) are defined within ISO 19115
 metadata. This service will use these constraints to apply suitable permissions to each Artefact within a Resource.
 
 **Note:** The examples listed in this section use the JSON representation of the ISO 19139 (ISO 19115 XML encoding)
@@ -371,7 +371,7 @@ For example:
 Where a product is restricted, but can be accessed by anyone internally, it MUST be marked as restricted and specify a
 conventional value `~nerc` to represent 'All NERC Staff'.
 
-'All NERC Staff' in this context includes any user or service within the NERC Azure Active Directory, which includes 
+'All NERC Staff' in this context includes any user or service within the NERC Azure Active Directory, which includes
 (but is not limited to):
 
 * BAS staff (inc. students)
@@ -400,16 +400,16 @@ Example access constraint:
 
 #### Constraints for products restricted to members of a specific team
 
-Where a product needs to be restricted to members of a specific team, or set of teams, it MUST be marked as restricted 
-and specify the identifier(s) for the Azure Active Directory group(s) that represent the relevant team(s) who's members 
+Where a product needs to be restricted to members of a specific team, or set of teams, it MUST be marked as restricted
+and specify the identifier(s) for the Azure Active Directory group(s) that represent the relevant team(s) who's members
 should have access.
 
 In most cases, these groups will underpin the Microsoft Office 365 Team for that team, however any group can be used
-(such as project specific group or a group representing something like the BAS Management Team). All members of 
-each group specified will be allowed access (i.e. a union of all group members). 
+(such as project specific group or a group representing something like the BAS Management Team). All members of
+each group specified will be allowed access (i.e. a union of all group members).
 
-Groups are referenced using their Object Identifier (Object ID), which can be found from the 
-[Groups section](https://portal.azure.com/#blade/Microsoft_AAD_IAM/GroupsManagementMenuBlade/AllGroups) of the Azure 
+Groups are referenced using their Object Identifier (Object ID), which can be found from the
+[Groups section](https://portal.azure.com/#blade/Microsoft_AAD_IAM/GroupsManagementMenuBlade/AllGroups) of the Azure
 Active Directory in the [Azure Portal](https://portal.azure.com).
 
 For example, the group that underpins the Microsoft Office 365 Team for MAGIC is
@@ -451,11 +451,11 @@ Example access constraint (multiple teams):
 
 #### Constraints for products restricted to a specific users
 
-Where a product needs to be restricted to a specific user, or set of users, it MUST be marked as restricted and specify 
+Where a product needs to be restricted to a specific user, or set of users, it MUST be marked as restricted and specify
 the identifier(s) for the Azure Active Directory user(s) that should have access.
 
-Users are referenced using their Object Identifier (Object ID), which can be found from the 
-[Users section](https://portal.azure.com/#view/Microsoft_AAD_IAM/UsersManagementMenuBlade/~/MsGraphUsers) of the Azure 
+Users are referenced using their Object Identifier (Object ID), which can be found from the
+[Users section](https://portal.azure.com/#view/Microsoft_AAD_IAM/UsersManagementMenuBlade/~/MsGraphUsers) of the Azure
 Active Directory in the [Azure Portal](https://portal.azure.com).
 
 For example, the Object ID for *Connie Watson* is `04615595-a264-4d8d-9a95-4b1ae6c8d85e`.
@@ -496,20 +496,20 @@ Example access constraint (multiple users):
 
 ### Permissions - SharePoint
 
-Permissions described by metadata record access constraints are applied to items stored in SharePoint using the 
+Permissions described by metadata record access constraints are applied to items stored in SharePoint using the
 Microsoft Graph API.
 
-**Note:** Ad-hoc permission assignments MUST NOT be made directly within SharePoint. They may be removed or changed 
+**Note:** Ad-hoc permission assignments MUST NOT be made directly within SharePoint. They may be removed or changed
 without warning by this service.
 
-Where permissions reference the `~nerc` 'All NERC Staff' alias, an 
-[Organisational sharing link](https://docs.microsoft.com/en-us/graph/api/driveitem-createlink) is created for each 
-file (Artefact) associated with the Resource (product). These links will be used in distribution options, instead of 
+Where permissions reference the `~nerc` 'All NERC Staff' alias, an
+[Organisational sharing link](https://docs.microsoft.com/en-us/graph/api/driveitem-createlink) is created for each
+file (Artefact) associated with the Resource (product). These links will be used in distribution options, instead of
 the normal item access URL.
 
-Where permissions reference one or more Object IDs, one or more 
-[DriveRecipient](https://docs.microsoft.com/en-us/graph/api/resources/driverecipient) resources are 
-[created](https://docs.microsoft.com/en-us/graph/api/driveitem-invite), granting each permission to access the 
+Where permissions reference one or more Object IDs, one or more
+[DriveRecipient](https://docs.microsoft.com/en-us/graph/api/resources/driverecipient) resources are
+[created](https://docs.microsoft.com/en-us/graph/api/driveitem-invite), granting each permission to access the
 directory representing the Resource (product). These permissions cascade to any files (Artefacts) within this directory.
 Normal access URLs for each item/file are used in distribution options.
 
