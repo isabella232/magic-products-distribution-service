@@ -154,6 +154,19 @@ installed.
 
 **Note:** This test script is not representative of how code for this service will be written.
 
+### Test metadata record loading script
+
+A test script is available to check an ISO 19115 metadata record using the BAS Metadata Library JSON encoding can be 
+loaded and validated against it's default schema, and the schema specific to this service, which ensures it complies 
+with the service [Requirements](#requirements). This script can be ran within a 
+[Development Environment](#development-environment).
+
+```shell
+$ poetry run python test-record.py
+```
+
+**Note:** This test script is not representative of how code for this service will be written.
+
 
 **Note:** This test script is not representative of how code for this service will be written.
 
