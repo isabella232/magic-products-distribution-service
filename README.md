@@ -116,10 +116,9 @@ to be supported by this service:
         - an object identifier of a user or group object within the NERC AAD
   - at least one `distribution` with:
     - a distributor of MAGIC
-    - at least one `distribution_option` with:
-      - a `transfer_option` with:
-        - a `href` value containing:
-          - a URI using the `file://` protocol, referencing a locally accessible file, under 5GB in size
+    - a `transfer_option` with:
+      - a `href` value containing:
+        - a URI using the `file://` protocol, referencing a locally accessible file, under 5GB in size
 
 ## Usage
 
@@ -158,8 +157,8 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
     * set the 'artefact_id' value for the new folder to '-' (dash), as it doesn't apply
     * click *Exit grid view* from the toolbar
 5. navigate into the newly created folder
-6. for each `distribution.distribution_option` listed in the metadata record for the Resource:
     1. upload the Artefact (file) listed in the `transfer_option.online_resource.href`, either using the *Upload* 
+6. for each `distribution` listed in the metadata record for the Resource:
        option in the toolbar, or by dragging & dropping into the main window
     2. click *Edit in grid view* from the toolbar:
         * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the 
@@ -176,7 +175,7 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
         5. deselect the *Allow editing* option under Other settings
         6. click *Apply*
         7. from the 'Copy link' section, click *Copy* to view the sharing link for the file (Artefact)
-        8. note this URL for use in creating distribution options
+        8. note this URL for use in creating Data Catalogue Download Proxy artefact lookup items
     2. if the constraint permissions uses an `permissions.object_id` property:
         1. for each object identifier:
             1. go to the [Azure Portal](https://portal.azure.com/) [1]
@@ -195,12 +194,14 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
             13. deselect the 'Notify people' option
             14. click *Grant access*
         2. for each file (Artefact) within the directory for the product (Resource):
-            1. note the URL for use in creating distributing options will be in the form of [3]
-8. for each `distribution.distribution_option` listed in the metadata record for the Resource:
-    1. update the `transfer_option.online_resource.href` value to use the URL noted for each distribution option
 9. re-import the metadata record for the Resource (product) in the Data Catalogue
 
 [1] Object identifiers cannot be specified when assigning permissions within the SharePoint UI. Therefore, object 
+           1. note the URL for use in creating Data Catalogue Download Proxy artefact lookup items in the form of [3]
+8. for each `distribution` listed in the metadata record for the Resource:
+   1. create a
+      [Data Catalogue Downloads Proxy artefact lookup item](https://gitlab.data.bas.ac.uk/MAGIC/add-metadata-toolbox#updating-downloads-proxy-artefacts-lookups)
+      manually [4]
 identifiers need to be converted into a corresponding email address for the group or user each identifier identifies.
 Users and groups can be searched for within the NERC Active Directory using the [Azure Portal](https://portal.azure.com).
 

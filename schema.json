@@ -62,15 +62,12 @@
       "items": {
         "required": [
           "distributor",
-          "distribution_options"
+          "transfer_option"
         ],
-        "additionalProperties": false,
+        "additionalProperties": true,
         "properties": {
           "distributor": {
             "$ref": "#/definitions/distributor"
-          },
-          "distribution_options": {
-            "$ref": "#/definitions/distribution_options"
           }
         }
       },
@@ -146,12 +143,6 @@
           }
         }
       }
-    },
-    "distribution_options": {
-      "title": "Distribution Options",
-      "description": "Set of formats and transfer options defining the forms the resource is distributed in.",
-      "type": "array",
-      "minItems": 1
     },
     "file_identifier": {
       "title": "File identifier",
@@ -295,7 +286,7 @@
   },
   "allOf": [
     {
-      "$ref": "https://metadata-standards.data.bas.ac.uk/bas-metadata-generator-configuration-schemas/v2/iso-19115-1-v2.json"
+      "$ref": "https://metadata-standards-testing.data.bas.ac.uk/bas-metadata-generator-configuration-schemas/v2/iso-19115-2-v3.json"
     },
     {
       "$ref": "#/definitions/resource"
