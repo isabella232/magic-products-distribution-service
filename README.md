@@ -133,7 +133,10 @@ $ poetry run python test-upload.py
 
 **Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
 
-**Note:** You will be asked to sign-in to the 'MAGIC-PDC Data Workflows PoC' application when signing-in.
+**Note:** You will be asked to sign in to the 'MAGIC-PDC Data Workflows PoC' application when running this script.
+
+**Note:** This test script is not representative of how code for this service will be written.
+
 
 **Note:** This test script is not representative of how code for this service will be written.
 
