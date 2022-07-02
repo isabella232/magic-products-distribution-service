@@ -166,8 +166,6 @@ lookup file.
 
 **Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
 
-**Note:** You will be asked to sign in to the 'MAGIC-PDC Data Workflows PoC' application when running this script.
-
 **Note:** This test script is not representative of how code for this service will be written.
 
 ### Old test scripts
@@ -740,6 +738,49 @@ Once created:
     * (more options) 'Enforce unique values': *False*
     * (more options) 'Add to all content types': *True*
     * (more options) column validation: None
+
+### Terraform
+
+Terraform is used for registering an Azure Application Registration to allow this service to authenticate users and 
+interact with SharePoint.
+
+Access to the [BAS AWS account](https://gitlab.data.bas.ac.uk/WSF/bas-aws) 
+(to access [Terraform remote state](#terraform-remote-state) state) and the NERC Azure tenancy are required to 
+provision these resources.
+
+```shell
+$ cd provisioning/terraform
+$ docker compose run terraform
+
+$ az login --allow-no-subscriptions
+
+$ terraform init
+$ terraform validate
+$ terraform fmt
+$ terraform apply
+
+$ exit
+$ docker compose down
+```
+
+#### Terraform remote state
+
+State information for this project is stored remotely using a
+[Backend](https://www.terraform.io/docs/backends/index.html).
+
+Specifically the [AWS S3](https://www.terraform.io/docs/backends/types/s3.html) backend as part of the
+[BAS Terraform Remote State](https://gitlab.data.bas.ac.uk/WSF/terraform-remote-state) project.
+
+Remote state storage will be automatically initialised when running `terraform init`. Any changes to remote state will
+be automatically saved to the remote backend, there is no need to push or pull changes.
+
+##### Remote state authentication
+
+Permission to read and/or write remote state information for this project is restricted to authorised users. Contact
+the [BAS Web & Applications Team](mailto:servicedesk@bas.ac.uk) to request access.
+
+See the [BAS Terraform Remote State](https://gitlab.data.bas.ac.uk/WSF/terraform-remote-state) project for how these
+permissions to remote state are enforced.
 
 ## Development
 
