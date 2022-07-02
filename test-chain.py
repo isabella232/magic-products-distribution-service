@@ -44,7 +44,7 @@ lookup_endpoint = "https://zrpqdlufnfqcmqmzppwzegosvu0rvbca.lambda-url.eu-west-1
 download_endpoint = "https://data.bas.ac.uk/download-testing"
 
 auth_client_tenancy: str = "https://login.microsoftonline.com/b311db95-32ad-438f-a101-7ba061712a4e"
-auth_client_id: str = "36661990-3367-40dc-b7e7-04f80f8ac894"
+auth_client_id: str = "3b2c5acf-728a-4b78-85f0-9560a6aad701"
 auth_client_scopes: List[str] = ["https://graph.microsoft.com/Files.ReadWrite.All"]
 auth_token_path = Path("./auth-token.json")
 

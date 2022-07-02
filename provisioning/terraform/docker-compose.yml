@@ -1,0 +1,11 @@
+---
+version: "2"
+
+services:
+  terraform:
+    image: zenika/terraform-azure-cli:release-6.1_terraform-1.0.6_azcli-2.28.1
+    volumes:
+      - .:/workspace
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
