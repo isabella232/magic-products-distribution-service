@@ -35,6 +35,7 @@ This service has a number of limitations, including:
 - where access is restricted to users or groups, these users and groups must be within the NERC Active Directory
 - files to be deposited in this service must be located on the same computer used to run the tool for this service
 - there is only a single, production, environment available, there is no training environment for example
+- a product's artefact's constraints will not change once deposited, even if the product/resource constraint changes
 
 See the project [issue tracker](#issue-tracking) for planned features that may address these limitations.
 
@@ -102,10 +103,10 @@ to be supported by this service:
 
 - a `file_identifier` property with a UUIDv4 value
 - a `hierarchy_level` property with a value of 'product'
-- at least one resource `constraint` with:
+- at least, and no more than, one resource `constraint`, that must be the first of any constraints listed, with:
   - a `type` property with a value of 'access'
   - a `restriction_code` property with a value of 'restricted'
-  - a `permissions` property with a list of values that are objects with:
+  - a `permissions` property with a list, with a single item, which is an object with:
     - a `scheme` property with a value of 'ms_graph'
     - a `scheme_version` property with a value of '1'
     - a `directory_id` property with a value of 'b311db95-32ad-438f-a101-7ba061712a4e'
@@ -114,11 +115,17 @@ to be supported by this service:
         - '~nerc' (where a product should be restricted to any NERC AAD principle)
       - an `object_id` property with a list of of values that must be:
         - an object identifier of a user or group object within the NERC AAD
-  - at least one `distribution` with:
-    - a distributor of MAGIC
-    - a `transfer_option` with:
-      - a `href` value containing:
-        - a URI using the `file://` protocol, referencing a locally accessible file, under 5GB in size
+- at least one resource `distribution` with:
+  - a distributor of MAGIC
+  - a `transfer_option` with:
+    - a `href` value containing:
+      - a URI using the `file://` protocol, referencing a locally accessible file, under 5GB in size
+
+To clarify the requirements for resource constraints:
+
+1. there MUST be one (and only one) resource access constraint that contains a permissions property
+2. this access constraint with a permissions property, MUST be the first item in the list of resource constraints
+3. multiple other resource constraints (of any type and form) may exist, providing these don't break (1) and (2) above
 
 ## Usage
 
