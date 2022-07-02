@@ -10,7 +10,7 @@ British Antarctic Survey (BAS).
 This service is intended to allow MAGIC to securely distribute products with relevant end-users.
 
 Specifically, this service acts as a data access system, to allow links within items in the Data Catalogue (a data
-discovery system) that describe products, to be downloaded (if they have access).
+discovery system) that describe products, to be downloaded if they have access.
 
 ### Status
 
@@ -96,8 +96,8 @@ to be supported by this service:
 
 1. the Resource must be considered a product within the [definition](#products) used by this service
 2. the Resource (product) to be deposited MUST be described by a suitably complete metadata record [1], deposited in
-   the BAS Data Catalogue
-3. the Artefacts (files) that make up each Resource (product) MUST fit within the [soft file size limits](#file-sizes)
+   the ADD Metadata Toolbox catalogue (BAS Data Catalogue)
+3. the Artefacts (files) that make up the Resource (product) MUST fit within the [soft file size limits](#file-sizes)
 
 [1] Required resource metadata:
 
@@ -157,14 +157,13 @@ $ poetry run python test-chain.py deposit foo
 Once deposited, a record can be withdrawn (reset) manually by:
 
 * discarding changes to modified files within the catalogue mock using [git](https://stackoverflow.com/a/692329)
-* ... remove directory for resource from SharePoint
+* removing the directory for the Resource from SharePoint
 
-... add an issue to document how to reset the staging instance of the Downloads Proxy to use the production instance 
-lookup file.
+**Note:** You need suitable permissions to run this script:
 
-**Note:** This test script is not representative of how code for this service will be written.
-
-**Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
+* you need to be a member of the MAGIC Microsoft Office365 Team
+* you need to have access access to an AWS IAM principle with the 
+  `BAS-ADD-Catalogue-Downloads-Proxy-Function-Write-Staging` IAM customer managed policy attached
 
 **Note:** This test script is not representative of how code for this service will be written.
 
@@ -342,14 +341,23 @@ https://data.bas.ac.uk/download/cb794264-e2d1-4a5a-8e31-8cf774fede54
 This project consists of:
 
 * a library and service for uploading and managing files within a SharePoint document library
-* a workflow for depositing files using a metadata record as input and output (writing back where files are stored)
+* a workflow for depositing files described by a metadata record (see [Workflow](#workflow))
 * a tool which automates this workflow based on a selected metadata record
-* documentation for using this tool, including instructions for using the workflow in a manual way
+* documentation for using this tool, including manual instructions for using the workflow if automated methods fail
+
+### Workflow
+
+For a metadata record from the [BAS Data Catalogue](https://gitlab.data.bas.ac.uk/MAGIC/add-metadata-toolbox/):
+
+* deposit files in a SharePoint document library
+* register download URLs for deposited files in the
+  [Data Catalogue Downloads Proxy](https://gitlab.data.bas.ac.uk/MAGIC/add-metadata-toolbox/#downloads-proxy)
+* updating the metadata record in the Data Catalogue (with links to deposited files via Downloads Proxy)
 
 ### Structure - conceptual
 
-Conceptually, Artefacts (files) for Resources (products) are stored as objects, with tags storing unique identifiers for
-each Artefact and the Resource they relate to.
+Conceptually, Artefacts (files) for Resources (products) are stored as immutable objects, with tags storing unique 
+identifiers for each Artefact and the Resource they relate to.
 
 For example, a map product ('Map of Foo') consists of two distribution files (Artefacts), a PDF and JPEG export.
 
@@ -368,6 +376,10 @@ Conceptually, these Artefacts would be stored as objects like this:
 | `foo-map.jpeg` | `24dce09c-9eee-4d90-8402-63f63012d767` | `6c21b27a-154a-488c-9ff9-764e6e9441c0` |
 
 **Note:** Object names are not significant in this service or conceptual model, they could be anything.
+
+**Note:** In cases where an Artefact needs to be changed (because the wrong file was selected, or contains a mistake 
+for example), the correct file would need to deposited as a new Artefact, as Artefacts are immutable. Once added, the 
+old artefact would be removed from the Resource (which are mutable).
 
 ### Structure - SharePoint
 
@@ -568,7 +580,7 @@ Example access constraint (multiple teams):
 }
 ```
 
-#### Constraints for products restricted to a specific users
+#### Constraints for products restricted to specific users
 
 Where a product needs to be restricted to a specific user, or set of users, it MUST be marked as restricted and specify
 the identifier(s) for the Azure Active Directory user(s) that should have access.
@@ -621,12 +633,12 @@ Microsoft Graph API.
 **Note:** Ad-hoc permission assignments MUST NOT be made directly within SharePoint. They may be removed or changed
 without warning by this service.
 
-Where permissions reference the `~nerc` 'All NERC Staff' alias, an
+Where permissions reference the `~nerc` 'All NERC Staff' alias, a view only 
 [Organisational sharing link](https://docs.microsoft.com/en-us/graph/api/driveitem-createlink) is created for each
 file (Artefact) associated with the Resource (product). These links will be used in distribution options, instead of
 the normal item access URL.
 
-Where permissions reference one or more Object IDs, one or more
+Where permissions reference one or more Object IDs, one or more view only
 [DriveRecipient](https://docs.microsoft.com/en-us/graph/api/resources/driverecipient) resources are
 [created](https://docs.microsoft.com/en-us/graph/api/driveitem-invite), granting each permission to access the
 directory representing the Resource (product). These permissions cascade to any files (Artefacts) within this directory.
