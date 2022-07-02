@@ -129,7 +129,50 @@ To clarify the requirements for resource constraints:
 
 ## Usage
 
-### Test upload script
+### Test script
+
+A test script is available to demonstrate an end-to-end process for depositing Artefacts within a Resource. It 
+implements the [Workflow](#workflow) for this project, with the following exceptions:
+
+* records aren't selected or read from the BAS Data Catalogue, a very simplified mock is used instead
+* as a consequence, updated records aren't written back to the Data Catalogue, but output as local files
+
+This test script combines and replaces the [older test scripts](#old-test-scripts) that tested specific parts of the 
+workflow.
+
+```shell
+$ poetry run python test-chain.py
+```
+
+With no arguments, this command will list available commands. Specifying the `deposit` command with no arguments will
+list available records for deposit.
+
+To deposit a resource 'foo':
+
+```shell
+$ poetry run python test-chain.py sign-in
+$ poetry run python test-chain.py deposit foo
+```
+
+Once deposited, a record can be withdrawn (reset) manually by:
+
+* discarding changes to modified files within the catalogue mock using [git](https://stackoverflow.com/a/692329)
+* ... remove directory for resource from SharePoint
+
+... add an issue to document how to reset the staging instance of the Downloads Proxy to use the production instance 
+lookup file.
+
+**Note:** This test script is not representative of how code for this service will be written.
+
+**Note:** You need suitable permissions (being a member of MAGIC) to perform these instructions.
+
+**Note:** You will be asked to sign in to the 'MAGIC-PDC Data Workflows PoC' application when running this script.
+
+**Note:** This test script is not representative of how code for this service will be written.
+
+### Old test scripts
+
+#### Test upload script
 
 A test script is available to check test files can be uploaded and permissions are set correctly etc. This script can be
 ran within a [Development Environment](#development-environment).
@@ -144,7 +187,7 @@ $ poetry run python test-upload.py
 
 **Note:** This test script is not representative of how code for this service will be written.
 
-### Test lookup items script
+#### Test lookup items script
 
 A test script is available to check artefact lookup entries can be added programmatically to the Data Catalogue 
 Downloads Proxy. This script can be ran within a [Development Environment](#development-environment).
@@ -161,7 +204,7 @@ installed.
 
 **Note:** This test script is not representative of how code for this service will be written.
 
-### Test metadata record loading script
+#### Test metadata record loading script
 
 A test script is available to check an ISO 19115 metadata record using the BAS Metadata Library JSON encoding can be 
 loaded and validated against it's default schema, and the schema specific to this service, which ensures it complies 
@@ -171,9 +214,6 @@ with the service [Requirements](#requirements). This script can be ran within a
 ```shell
 $ poetry run python test-record.py
 ```
-
-**Note:** This test script is not representative of how code for this service will be written.
-
 
 **Note:** This test script is not representative of how code for this service will be written.
 
