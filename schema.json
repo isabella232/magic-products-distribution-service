@@ -4,60 +4,61 @@
   "title": "BAS MAGIC Products Distribution Service - ISO 19115-2 resource configuration schema v1",
   "description": "Configuration schema (version 1) using the ISO 19115-2 metadata standard for configuring resource permissions within the MAGIC Products Distribution Service",
   "definitions": {
-    "constraint": {
-      "title": "Constraint",
-      "description": "Access/usage constraint describing a limitation on accessing or using the resource",
+    "constraint_with_permissions": {
+      "title": "Constraint (Permissions)",
+      "description": "Constraint describing permissions needed to access the resource.",
       "type": "object",
       "required": [
         "type",
-        "restriction_code"
+        "restriction_code",
+        "permissions"
       ],
       "additionalProperties": false,
       "properties": {
         "type": {
-          "title": "Constraint type",
-          "description": "Whether the constraint constrains how the resource can be accessed, or be used.",
-          "type": "string",
-          "enum": [
-            "access"
-          ]
+          "$ref": "#/definitions/constraint_type"
         },
         "restriction_code": {
-          "title": "Restriction code",
-          "description": "The domain the constraint pertains to.",
-          "type": "string",
-          "enum": [
-            "restricted"
-          ]
-        },
-        "statement": {
-          "title": "Statement",
-          "description": "Free-text description/definition of the constraint.",
-          "type": "string"
-        },
-        "href": {
-          "title": "URL",
-          "description": "URL identifying, or relating to, the constraint.",
-          "type": "string",
-          "format": "uri"
+          "$ref": "#/definitions/restriction_code"
         },
         "permissions": {
           "$ref": "#/definitions/permissions"
         }
       }
     },
+    "constraint_without_permissions": {
+      "title": "Constraint (Without Permissions)",
+      "description": "Any other constraint that does not describe permissions needed to access the resource.",
+      "type": "object",
+      "not": {
+        "required": ["permissions"]
+      }
+    },
+    "constraint_type": {
+      "title": "Constraint type",
+      "description": "Whether the constraint constrains how the resource can be accessed, or be used.",
+      "type": "string",
+      "enum": [
+        "access"
+      ]
+    },
     "constraints": {
       "title": "Constraints",
-      "description": "Access/usage constraints for describing limitations on accessing or using the resource.",
+      "description": "Access/usage constraints for describing limitations on accessing or using the resource. The first constraint MUST describe permissions required to access the resource.",
       "type": "array",
-      "items": {
-        "$ref": "#/definitions/constraint"
+      "items": [
+        {
+          "$ref": "#/definitions/constraint_with_permissions"
+        }
+      ],
+      "additionalItems": {
+        "$ref": "#/definitions/constraint_without_permissions"
       },
       "minItems": 1
     },
     "distribution": {
       "title": "Distribution",
-      "description": "Information about how to acquire, enquire about or retrieve the resource",
+      "description": "Information about how to acquire, enquire about or retrieve the resource.",
       "type": "array",
       "items": {
         "required": [
@@ -86,52 +87,84 @@
         "organisation": {
           "properties": {
             "name": {
-              "enum": ["Mapping and Geographic Information Centre, British Antarctic Survey"]
+              "enum": [
+                "Mapping and Geographic Information Centre, British Antarctic Survey"
+              ]
             }
           }
         },
         "email": {
-          "enum": ["magic@bas.ac.uk"]
+          "enum": [
+            "magic@bas.ac.uk"
+          ]
         },
         "phone": {
-          "enum": ["+44 (0)1223 221400"]
+          "enum": [
+            "+44 (0)1223 221400"
+          ]
         },
         "address": {
-          "required": ["delivery_point", "city", "administrative_area", "postal_code", "country"],
+          "required": [
+            "delivery_point",
+            "city",
+            "administrative_area",
+            "postal_code",
+            "country"
+          ],
           "properties": {
             "delivery_point": {
-              "enum": ["British Antarctic Survey, High Cross, Madingley Road"]
+              "enum": [
+                "British Antarctic Survey, High Cross, Madingley Road"
+              ]
             },
             "city": {
-              "enum": ["Cambridge"]
+              "enum": [
+                "Cambridge"
+              ]
             },
             "administrative_area": {
-              "enum": ["Cambridgeshire"]
+              "enum": [
+                "Cambridgeshire"
+              ]
             },
             "postal_code": {
-              "enum": ["CB3 0ET"]
+              "enum": [
+                "CB3 0ET"
+              ]
             },
             "country": {
-              "enum": ["United Kingdom"]
+              "enum": [
+                "United Kingdom"
+              ]
             }
           }
         },
         "online_resource": {
           "properties": {
             "href": {
-              "enum": ["https://www.bas.ac.uk/team/magic"]
+              "enum": [
+                "https://www.bas.ac.uk/team/magic"
+              ]
             },
             "title": {
-              "enum": ["Mapping and Geographic Information Centre (MAGIC) - BAS public website"]
+              "enum": [
+                "Mapping and Geographic Information Centre (MAGIC) - BAS public website"
+              ]
             },
             "description": {
-              "enum": ["General information about the BAS Mapping and Geographic Information Centre (MAGIC) from the British Antarctic Survey (BAS) public website."]
+              "enum": [
+                "General information about the BAS Mapping and Geographic Information Centre (MAGIC) from the British Antarctic Survey (BAS) public website."
+              ]
             },
             "protocol": {
-              "enum": ["WWW:LINK-1.0-http--link"]
+              "enum": [
+                "WWW:LINK-1.0-http--link"
+              ]
             },
             "function": {
-              "enum": ["information"]
+              "enum": [
+                "information"
+              ]
             }
           }
         },
@@ -163,6 +196,12 @@
         "product"
       ]
     },
+    "href": {
+      "title": "URL",
+      "description": "URL identifying, or relating to, the constraint.",
+      "type": "string",
+      "format": "uri"
+    },
     "identification": {
       "title": "Identification",
       "description": "Information about how to reference, categorise, or describe the resource.",
@@ -181,10 +220,18 @@
       "title": "permission",
       "description": "Conditions which must be met to access artefacts of the resource.",
       "type": "object",
-      "required": ["scheme", "scheme_version", "directory_id"],
+      "required": [
+        "scheme",
+        "scheme_version",
+        "directory_id"
+      ],
       "oneOf": [
-        {"$ref": "#/definitions/_permissions_ms_graph_v1_alias"},
-        {"$ref": "#/definitions/_permissions_ms_graph_v1_object_id"}
+        {
+          "$ref": "#/definitions/_permissions_ms_graph_v1_alias"
+        },
+        {
+          "$ref": "#/definitions/_permissions_ms_graph_v1_object_id"
+        }
       ]
     },
     "_permissions_ms_graph_v1_alias": {
@@ -203,7 +250,9 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["~nerc"]
+            "enum": [
+              "~nerc"
+            ]
           },
           "minItems": 1
         }
@@ -234,19 +283,25 @@
       "title": "Directory ID",
       "description": "Azure Active Directory ID",
       "type": "string",
-      "enum": ["b311db95-32ad-438f-a101-7ba061712a4e"]
+      "enum": [
+        "b311db95-32ad-438f-a101-7ba061712a4e"
+      ]
     },
     "__permissions_ms_graph_v1_scheme": {
       "title": "Scheme",
       "description": "Permissions scheme, typically provider specific.",
       "type": "string",
-      "enum": ["ms_graph"]
+      "enum": [
+        "ms_graph"
+      ]
     },
     "__permissions_ms_graph_v1_scheme_version": {
       "title": "Scheme version",
       "description": "Permissions scheme version.",
       "type": "string",
-      "enum": ["1"]
+      "enum": [
+        "1"
+      ]
     },
     "permissions": {
       "title": "Permissions",
@@ -255,6 +310,7 @@
       "items": {
         "$ref": "#/definitions/permission"
       },
+      "maxItems": 1,
       "minItems": 1
     },
     "resource": {
@@ -282,6 +338,19 @@
           "$ref": "#/definitions/distribution"
         }
       }
+    },
+    "restriction_code": {
+      "title": "Restriction code",
+      "description": "The domain the constraint pertains to.",
+      "type": "string",
+      "enum": [
+        "restricted"
+      ]
+    },
+    "statement": {
+      "title": "Statement",
+      "description": "Free-text description/definition of the constraint.",
+      "type": "string"
     }
   },
   "allOf": [
