@@ -14,15 +14,14 @@ discovery system) that describe products, to be downloaded if they have access.
 
 ### Status
 
-This project is an early alpha working towards a Minimal Viable Product (MVP). This means:
+This project is an alpha Minimal Viable Product (MVP) working towards a beta MVP. This means:
 
-* all, or parts, of this service may not be working
-* all, or parts, of this service may stop working at any time
-* all, or parts, of this service may not work correctly, or as expectedly (including destructively)
-* all, or parts, of this service may change at any time (in terms of implementation or functionally)
+* this service may stop working at any time
+* this service may not work as expectedly (but not destructively)
+* this service may change at any time (in terms of implementation not functionally)
 * use-cases supported by this service are limited and restrictive
-* documentation may be missing or incorrect
-* no support is provided and no real and/or sensitive information should be used
+* documentation may be out of date
+* limited support is provided
 
 ### Limitations
 
