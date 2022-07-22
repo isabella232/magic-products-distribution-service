@@ -225,14 +225,14 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
 1. export the metadata record for the Resource (product) from the Data Catalogue
 2. from the [MAGIC Products Distribution](https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/_layouts/15/viewlsts.aspx?view=14)
    SharePoint site, select the relevant document library (use 'Main' if unsure)
-3. click *+ New* -> *Folder* from the toolbar
+3. click *+ New* -> *Folder* from the toolbar:
     * name the folder after the `file_identifier` property from the metadata record for the Resource
-4. click *Edit in grid view* from the toolbar
+4. click *Edit in grid view* from the toolbar:
     * set the 'record_id' value for the new folder to the value of the `file_identifier` property in the metadata
       record for the Resource
     * set the 'artefact_id' value for the new folder to '-' (dash), as it doesn't apply
     * click *Exit grid view* from the toolbar
-5. navigate into the newly created folder
+5. navigate into the newly created folder:
 6. for each `distribution` listed in the metadata record for the Resource:
     1. upload the Artefact (file) listed in the `transfer_option.online_resource.href`, either using the *Upload*
        option in the toolbar, or by dragging & dropping into the main window
@@ -261,7 +261,7 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
             5. note the value for the 'Email' property for use in assigning permissions
             6. in SharePoint, select the directory for the product (Resource)
             7. click *Open the details pane* ('i' icon) from the toolbar
-            8. from the 'Has access' section, click *Manage access'
+            8. from the 'Has access' section, click *Manage access*
             9. from the 'Direct access' section, click *Grant Access* ('+' icon)
             10. in the 'name' field, group or email field, enter the email address noted earlier
             11. click the 'who has access' link ('pencil' icon) and select the *Can View* option ('prohibited pencil'
