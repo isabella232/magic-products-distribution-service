@@ -47,9 +47,18 @@
       },
       "distribution_options": [
         {
+          "format": {
+            "format": "PNG",
+            "version": "1",
+            "href": "https://www.iana.org/assignments/media-types/image/png"
+          },
           "transfer_option": {
+            "size": {
+              "unit": "kB",
+              "magnitude": 83
+            },
             "online_resource": {
-              "href": "https://nercacuk.sharepoint.com/:t:/s/MAGICProductsDistribution/EfC27DV6lOFCg7dQt8egtdgBh3wLtUOY_kztAvIBdimj5A?e=b48aWZ\n",
+              "href": "file://../../test-artefact.png",
               "title": "Test Artefact",
               "description": "Download Test Artefact",
               "protocol": "WWW:LINK-1.0-http--link",
