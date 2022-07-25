@@ -1,7 +1,5 @@
 /.idea/runConfigurations
 /.venv
 /provisioning/terraform/.terraform
-/htmlcov
-/.coverage
 __pycache__
 auth-token.json
