@@ -645,51 +645,28 @@ Normal access URLs for each item/file are used in distribution options.
 
 ### SharePoint - objects reference
 
+See the 
+[MAGIC Products Distribution Service - Sharepoint objects reference](https://start.1password.com/open/i?a=QSB6V7TUNVEOPPPWR6G7S2ARJ4&v=ffy5l25mjdv577qj6izuk6lo4m&i=pnywcjeudvbo7beuw4om6jfpce&h=magic.1password.eu) 
+item in the shared vault of the MAGIC 1Password account for the specific SharePoint resources used. Generic information 
+is shown in this README.
+
+**Note:** These resources are not secrets but are not listed publicly as a precaution.
+
 #### SharePoint site
-
-ID (`{SITE_ID}`): `nercacuk.sharepoint.com,0561c437-744c-470a-887e-3d393e88e4d3,63825c43-db1b-40ca-a717-0365098c70c0`
-
-Name: MAGICProductsDistribution
-
-Title: MAGIC Products Distribution
-
-URL: https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution
-
-Graph resource: https://graph.microsoft.com/v1.0/sites/nercacuk.sharepoint.com,0561c437-744c-470a-887e-3d393e88e4d3,63825c43-db1b-40ca-a717-0365098c70c0
 
 Graph resource reference: https://docs.microsoft.com/en-us/graph/api/resources/site
 
 **Note:** To find the ID for this resource, query the
 [search](https://docs.microsoft.com/en-us/graph/api/site-search) endpoint of the sites resource in Microsoft Graph,
-e.g. `https://graph.microsoft.com/v1.0/sites?search=magic`.
+e.g. `https://graph.microsoft.com/v1.0/sites?search=site_name`.
 
 #### Document Library (Main/Production)
-
-ID (`{DRIVE_ID}`): `b!N8RhBUx0CkeIfj05Pojk00NcgmMb28pApxcDZQmMcMBzlP8HkrS0TKveYyZFGRd3`
-
-Name: Main
-
-Title: Main
-
-URL: https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main
-
-Graph resource: https://graph.microsoft.com/v1.0/drives/b!N8RhBUx0CkeIfj05Pojk00NcgmMb28pApxcDZQmMcMBzlP8HkrS0TKveYyZFGRd3
 
 Graph resource reference: https://docs.microsoft.com/en-us/graph/api/resources/drive
 
 **Note:** To find the ID for this resource, query `https://graph.microsoft.com/v1.0/sites/{SITE}/drives`
 
 #### Document Library List (Main/Production)
-
-ID (`{LIST_ID}`): `07ff9473-b492-4cb4-abde-632645191777`
-
-Name: Main
-
-Title: Main
-
-URL: https://nercacuk.sharepoint.com/sites/MAGICProductsDistribution/Main
-
-Graph resource: https://graph.microsoft.com/v1.0/sites/nercacuk.sharepoint.com,0561c437-744c-470a-887e-3d393e88e4d3,63825c43-db1b-40ca-a717-0365098c70c0/lists/07ff9473-b492-4cb4-abde-632645191777
 
 Graph resource reference: https://docs.microsoft.com/en-us/graph/api/resources/list
 
