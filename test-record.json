@@ -197,30 +197,32 @@
     "spatial_resolution": 1000000,
     "character_set": "utf-8",
     "language": "eng",
-    "extent": {
-      "geographic": {
-        "bounding_box": {
-          "west_longitude": -45.61521,
-          "east_longitude": -27.04976,
-          "south_latitude": -68.1511,
-          "north_latitude": -54.30761
-        }
-      },
-      "temporal": {
-        "period": {
-          "start": "2018-03-15T00:00:00",
-          "end": "2008-11-12T10:20:30"
+    "extents": [
+      {
+        "identifier": "bounding",
+        "geographic": {
+          "bounding_box": {
+            "west_longitude": -45.61521,
+            "east_longitude": -27.04976,
+            "south_latitude": -68.1511,
+            "north_latitude": -54.30761
+          }
+        },
+        "temporal": {
+          "period": {
+            "start": "2018-03-15T00:00:00",
+            "end": "2008-11-12T10:20:30"
+          }
         }
       }
-    },
+    ],
     "lineage": "This resource was generated in about 1 minute in the macOS Sketch vector drawing application. It's contents are fictitious, with no history or origin. It does not describe anything real."
   },
   "distribution": [
     {
       "distributor": {
         "organisation": {
-          "name": "Mapping and Geographic Information Centre, British Antarctic Survey",
-          "href": "https://ror.org/01rhff309",
+          "name": "Mapping and Geographic Information Centre, British Antarctic Survey",          "href": "https://ror.org/01rhff309",
           "title": "ror"
         },
         "phone": "+44 (0)1223 221400",
