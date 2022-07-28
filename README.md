@@ -237,7 +237,7 @@ To manually deposit Artefacts (files) for a Resource (product) that meets the [R
     1. upload the Artefact (file) listed in the `transfer_option.online_resource.href`, either using the *Upload*
        option in the toolbar, or by dragging & dropping into the main window
     2. click *Edit in grid view* from the toolbar:
-        * set the 'record_id' value for the uploaded file to the value of the `file_identifier` property in the
+        * set the 'resource_id' value for the uploaded file to the value of the `file_identifier` property in the
      metadata record for the Resource
         * set the 'artefact_id' value for the uploaded file to a new UUID value (using
      [this tool](https://www.uuidgenerator.net) for example)
@@ -306,10 +306,11 @@ $ awscurl --region eu-west-1 --service lambda --access_key $AWS_ACCESS_KEY_ID --
 
 Where:
 
-* `{origin_url}` is the URL noted for creating Data Catalogue Download Proxy artefact lookup items
+* `{origin_url}` is the URL noted in step 7 (from SharePoint)
 * `{artefact_id}` is the unique ID generated for the Artefact
 * `{resource_id}` is the value of the `file_identifier` property in the metadata for the Artefact
-* `{media_type}` is the (preferably IANA assigned) media type for the Artefact
+* `{media_type}` is the (preferably [IANA assigned](https://www.iana.org/assignments/media-types/media-types.xhtml)) 
+  media type for the Artefact
 
 For example (based on [3]):
 
